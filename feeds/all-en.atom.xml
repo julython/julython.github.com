@@ -1,11 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Julython Blog</title><link href="/" rel="alternate"></link><link href="/feeds/all-en.atom.xml" rel="self"></link><id>/</id><updated>2012-10-18T03:00:00-05:00</updated><entry><title>Julython in January?</title><link href="/2012/Oct/julython-in-january/" rel="alternate"></link><updated>2012-10-18T03:00:00-05:00</updated><author><name>Robert Myers</name></author><id>tag:,2012-10-18:2012/Oct/julython-in-january/</id><summary type="html">&lt;p&gt;It has been a number of months since the last commits were recorded.
-Many of you requested that we just keep going each month. While we
-like that you had so much fun we thought it was best to make it a
-little more special. But open source software moves so fast once a year
-just doesn't cut it, so we have decided to bring back the fun for
-the January edition of Julython.&lt;/p&gt;
-&lt;p&gt;Like many of you we have been busy doing other things and not working
-on the site. We want to open up to you our users to see how we can
-attract more people and projects to play along.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Julython Blog</title><link href="/" rel="alternate"></link><link href="/feeds/all-en.atom.xml" rel="self"></link><id>/</id><updated>2012-10-18T03:00:00-05:00</updated><entry><title>Nothing to see here</title><link href="/2012/Oct/nothing-to-see-here/" rel="alternate"></link><updated>2012-10-18T03:00:00-05:00</updated><author><name>Robert Myers</name></author><id>tag:,2012-10-18:2012/Oct/nothing-to-see-here/</id><summary type="html">&lt;p&gt;First POST!!&lt;/p&gt;
 </summary><category term="python"></category><category term="opensource"></category></entry></feed>

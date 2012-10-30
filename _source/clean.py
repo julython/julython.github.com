@@ -15,7 +15,11 @@ def clean(pwd, test=False):
             print name
         else:
             print "removing %s" % name
-            shutil.rmtree(os.path.join(pwd, name))
+            f = os.path.join(pwd, name)
+            if os.path.isdir(f):
+                shutil.rmtree(os.path.join(pwd, name))
+            else:
+                os.remove(f)
 
 if __name__ == "__main__":
     from optparse import OptionParser
