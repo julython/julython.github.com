@@ -3,8 +3,8 @@
 
 AUTHOR = u"Robert Myers"
 SITENAME = u"Julython Blog"
-SITEURL = ''
-#THEME = '.'
+SITEURL = 'http://blog.julython.org'
+THEME = '.'
 TIMEZONE = 'America/Chicago'
 
 GITHUB_URL = 'https://github.com/julython/julython.org'
