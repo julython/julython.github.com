@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Julython Blog</title><link href="http://blog.julython.org/" rel="alternate"></link><link href="http://blog.julython.org/feeds/julython.atom.xml" rel="self"></link><id>http://blog.julython.org/</id><updated>2012-12-06T10:00:00-06:00</updated><entry><title>Nothing to see here</title><link href="http://blog.julython.org/2012/Dec/nothing-to-see-here/" rel="alternate"></link><updated>2012-12-06T10:00:00-06:00</updated><author><name>Robert Myers</name></author><id>tag:blog.julython.org,2012-12-06:2012/Dec/nothing-to-see-here/</id><summary type="html">&lt;p&gt;First POST!!&lt;/p&gt;
-&lt;p&gt;lksdjfsssslskdjflskdjkkkk kkkkkkkkkkkkkkk kkkkk k k k kkkkkkkkkkk k kkkkkkkkkkk k kk k kk kkkkkkkk k kkkkkkkkkkk kk k kkkkk k  kkk k kk k k kkkkkkkkkkkkkkk kkkkk  kkkkkkkkkkk kkkkkkkkkkk&lt;/p&gt;
-&lt;p&gt;kkkkkkkkkk slkdj
-lksdj slkdj lskdj flksjdlks sldkjlkj
-slkdjkll
-sdlkdjlks&lt;/p&gt;
-&lt;p&gt;slkjldkjslk
-some code:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-from django import foo
-
-def beans(slk):
-    &amp;quot;Why beans&amp;quot;
-    pass
-&lt;/pre&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Julython Blog</title><link href="http://blog.julython.org/" rel="alternate"></link><link href="http://blog.julython.org/feeds/Julython.atom.xml" rel="self"></link><id>http://blog.julython.org/</id><updated>2012-12-12T12:12:00-06:00</updated><entry><title>Nothing to see here</title><link href="http://blog.julython.org/2012/Dec/nothing-to-see-here/" rel="alternate"></link><updated>2012-12-12T12:12:00-06:00</updated><author><name>Robert Myers</name></author><id>tag:blog.julython.org,2012-12-12:2012/Dec/nothing-to-see-here/</id><summary type="html">&lt;p&gt;You heard it right, Julython is back, never mind the calendar. J(an)ulython
+is fast approaching so you better get ready. Time to dust off those open source
+libraries you haven't touched since August. Another 31 days and nights to
+commit like it's going out of style. Already around the world J(an)ulython
+&amp;quot;Kick off&amp;quot; parties are being planned for the night of December 31st, there is
+probably one near you too! Be sure to drunkenly challenge the others at the
+party to beat your score. Remember to party responsibly though, don't push
+your commits until the morning.&lt;/p&gt;
+&lt;p&gt;Why in January? Many projects release on a 6 month schedule. We feel that
+in order to stay fresh you should at least match that with your own projects.
+January also has that whole &amp;quot;New Years Resolution&amp;quot; thing too.
+But let's face it, running is hard, wouldn't you rather write some Python?&lt;/p&gt;
+&lt;p&gt;We're busy updating the site, cause we haven't touched it in 6 months either :)
+But you can still look over the past results and see who you need to beat this
+time. If you still have your web hook from last time you are all set. If not
+stay tuned and we'll update everyone when the site is ready for testing again.&lt;/p&gt;
+&lt;p&gt;Head on over to &lt;a class="reference external" href="http://www.julython.org/"&gt;http://www.julython.org/&lt;/a&gt; Today!&lt;/p&gt;
 </summary><category term="python"></category><category term="opensource"></category></entry></feed>
