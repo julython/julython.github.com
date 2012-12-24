@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Julython Code Refresh</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="31 days and nights of Python">
+    <link href="../../.././theme/css/main.css" rel="stylesheet" type="text/css"/>
+    <link href="../../.././theme/css/pygments.css" rel="stylesheet" type="text/css"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'/>
+    <link href='http://fonts.googleapis.com/css?family=Doppio+One' rel='stylesheet' type='text/css'/>
+    <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+    
+    
+  </head>
+
+<body id="index" class="home">
+    <div class="navbar navbar-fixed-top" id="topnav">
+      <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="../../../."><img class="logo" alt="julython.org" src="../../.././theme/images/julython_logo_small.png"/> Blog</a>
+            
+            <div class="nav">
+              <ul class="nav">
+                
+                
+                
+                
+                
+                    <li class="active"><a href="../../.././category/code.html">Code</a></li>
+                
+                    <li ><a href="../../.././category/julython.html">Julython</a></li>
+                
+             </ul>
+           </div>
+         </div>
+       </div>
+     </div>
+
+<a href="https://github.com/julython/julython.org">
+
+<img style="position: absolute; top: 0; right: 0; border: 0; z-index: 9999;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+
+</a>
+
+        
+     <div class="container-narrow  section-container ">
+	   <div class="row-fluid">
+	   	<div class="">
+	   		
+        
+<section id="content" class="body">
+  <header>
+    <h2 class="participating">Julython Code Refresh</h2>
+    
+	<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="julython">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+	
+  </header>
+  <footer class="post-info">
+    <abbr class="published" title="2012-12-24T20:12:00">
+      Mon 24 December 2012
+    </abbr>
+    
+    <address class="vcard author">
+      By <a class="url fn" href="../../.././author/robert-myers.html">Robert Myers</a>
+    </address>
+    
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    <p>When we launched over 6 months ago the site was built on <a class="reference external" href="https://developers.google.com/appengine/">Google Appengine</a>.
+The site was built with <a class="reference external" href="http://djangoproject.org">Django</a> but used the builtin <a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/overview">datastore</a> for models.
+<a class="reference external" href="https://developers.google.com/appengine/">Google Appengine</a> provides a complete set of tools to run any web application.
+Running on a <a class="reference external" href="http://en.wikipedia.org/wiki/Platform_as_a_service">PAAS</a> removes a lot of the headaches associated with running a
+production site.</p>
+<p>Then last month I started a new job at <a class="reference external" href="http://www.rackspace.com">Rackspace</a> working on the
+<a class="reference external" href="http://www.rackspace.com/cloud/public/databases/">Cloud Database</a> product which is <a class="reference external" href="https://github.com/stackforge/reddwarf">open source</a>. It is really great to work
+for a company that recognizes the power of open source. Naturally I have to dog
+food my own product, that and they are footing the bill :) So I got to work on
+converting the site to use standard <a class="reference external" href="http://djangoproject.org">Django</a> models, <a class="reference external" href="http://django-tastypie.readthedocs.org/en/latest/tutorial.html">Tastypie</a>, <a class="reference external" href="http://django-social-auth.readthedocs.org/en/latest/">Django Social
+Auth</a>, and <a class="reference external" href="http://south.readthedocs.org/en/0.7.6/">South</a>. I am quite pleased with the results. Ironically the site
+now takes advantange of more open source projects, which we are trying to
+promote :)</p>
+<div class="section" id="architechture">
+<h2>Architechture</h2>
+<div class="warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">I work for <a class="reference external" href="http://www.rackspace.com">Rackspace</a> 'insert standard disclaimer here'.</p>
+</div>
+<p>The new site uses a couple of products from the cloud services at <a class="reference external" href="http://www.rackspace.com">Rackspace</a>.
+First there is a <a class="reference external" href="http://www.rackspace.com/cloud/public/loadbalancers/">Cloud Load Balancer</a> in front of two 512 MB <a class="reference external" href="http://www.rackspace.com/cloud/public/servers/">Cloud Servers</a>.
+The two web nodes are running a <a class="reference external" href="http://wiki.nginx.org/Main">nginx</a> proxy in front of <a class="reference external" href="http://gunicorn.org">gunicorn</a>. The web
+nodes talk to a 512 MB MySQL <a class="reference external" href="http://www.rackspace.com/cloud/public/databases/">Cloud Database</a>.</p>
+<p>Appengine has a great tool for <a class="reference external" href="https://developers.google.com/appengine/docs/python/tools/appstats">monitoring performance</a> of your web apps. The
+dashboard has a number of graphs as well to check on the health of your web
+app. This is hard to give up, which is why I turned to <a class="reference external" href="http://newrelic.com">New Relic</a>. With
+<a class="reference external" href="http://newrelic.com">New Relic</a> you get <a class="reference external" href="https://newrelic.com/product/real-user-monitoring">much</a> <a class="reference external" href="https://newrelic.com/product/application-monitoring">more</a> <a class="reference external" href="https://newrelic.com/product/server-monitoring">data</a>, I do not regret the switch. (well, it
+costs money but still, it is worth it)</p>
+<p>&lt;shameless plug&gt;</p>
+<p>During <a class="reference external" href="http://www.julython.org">J(an)ulython</a> I'll be working on my project <a class="reference external" href="https://github.com/rmyers/cannula">cannula</a> which is a
+deployment tool for websites. Using <a class="reference external" href="https://github.com/rmyers/cannula">cannula</a> I can deploy the site like so:</p>
+<pre class="literal-block">
+$ git push cannula master
+</pre>
+<p>&lt;/shameless plug&gt;</p>
+</div>
+<div class="section" id="living-on-the-edge">
+<h2>Living on the Edge</h2>
+<p>Even though Django 1.5 is still in beta it is worth running to get
+the new <a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/auth/#auth-custom-user">configurable User model</a>. This made the transition super easy from
+<a class="reference external" href="http://webapp-improved.appspot.com/">webapp2</a> user models on Appengine to a
+custom class to interact with <a class="reference external" href="http://django-social-auth.readthedocs.org/en/latest/">Django Social Auth</a> properly. <a class="reference external" href="http://webapp-improved.appspot.com/">Webapp2</a> stores the
+auth_ids in the format 'provider:uid' in a list property on the User class. It
+also provides methods to add new auth ids etc. Now with Django 1.5 you can alter
+the User Class to add custom fields or methods. Here is the User model from
+Julthon:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractUser</span>
+<span class="kn">from</span> <span class="nn">social_auth.models</span> <span class="kn">import</span> <span class="n">UserSocialAuth</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="c"># more custom fields here</span>
+
+    <span class="k">def</span> <span class="nf">add_auth_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth_str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Example::</span>
+<span class="sd">            user = User.objects.get(username=&#39;foo&#39;)</span>
+<span class="sd">            user.add_auth_id(&#39;email:foo@example.com&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">provider</span><span class="p">,</span> <span class="n">uid</span> <span class="o">=</span> <span class="n">auth_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">UserSocialAuth</span><span class="o">.</span><span class="n">create_social_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">provider</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_by_auth_id</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">auth_str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Example::</span>
+<span class="sd">            user = User.get_by_auth_id(&#39;twitter:julython&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">provider</span><span class="p">,</span> <span class="n">uid</span> <span class="o">=</span> <span class="n">auth_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+        <span class="n">sa</span> <span class="o">=</span> <span class="n">UserSocialAuth</span><span class="o">.</span><span class="n">get_social_auth</span><span class="p">(</span><span class="n">provider</span><span class="p">,</span> <span class="n">uid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sa</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">sa</span><span class="o">.</span><span class="n">user</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">auth_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">auths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">social_auth</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">provider</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">uid</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">auths</span><span class="p">]</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Using the provider 'email' you can store multiple email addresses for
+the user and let <a class="reference external" href="http://django-social-auth.readthedocs.org/en/latest/">Django Social Auth</a> handle the uniqueness of email
+addresses.</p>
+</div>
+<p>Now with very little change to the api endpoint for commits it is easy to
+associate a commit with a user by email address.</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Commit</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">AUTH_USER_MODEL</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="nb">hash</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">2024</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">user_model</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;No need to import our custom user model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rel</span><span class="o">.</span><span class="n">to</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_by_email</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">commits</span><span class="p">,</span> <span class="n">project</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a commit by email address&quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">user_model</span><span class="p">()</span><span class="o">.</span><span class="n">get_by_auth_id</span><span class="p">(</span><span class="s">&#39;email:</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">email</span><span class="p">)</span>
+                <span class="c"># create the commit here</span>
+</pre></div>
+<p>You could accomplish everything just by interacting with <a class="reference external" href="http://django-social-auth.readthedocs.org/en/latest/">Django Social Auth</a>
+models. It just seems a little cleaner to use methods on the User model to
+get a user or add properties to it. The commit model in this case really should
+not care about the Social Auth models.</p>
+</div>
+<div class="section" id="sql-oh-how-i-missed-you">
+<h2>SQL Oh How I Missed You</h2>
+<p>I love NoSQL, I hate altering tables. It is even better with Appengine as the
+datastore is just there, zero configuration and no syncing tables. It's a lazy
+developers dream come true. My biggest complaints of the Datastore is the
+lack of a (fast and complete) <a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/queryclass#Query_count">count method</a> and if you want to do a query
+there has to be an <a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/indexes">Index built for it</a>. Some things are just easier to do
+with SQL.</p>
+<div class="section" id="location-and-team-totals">
+<h3>Location and Team Totals</h3>
+<p>One major pain point with the code during July was when people changed
+their location or team. Since all of the data was <a class="reference external" href="http://en.wikipedia.org/wiki/Denormalization">denormalized</a> this meant that
+both location or team totals needed to be updated. Appengine has a nice builtin
+<a class="reference external" href="https://developers.google.com/appengine/articles/deferred">deferred task</a> tool to spawn background tasks to do this. But in the SQL
+world this is just a simple JOIN query. Okay it is slightly complex, but still
+easy to pull off with a <a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/db/sql/">raw query</a>.</p>
+<p>First here is the Location model:</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Location</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">slug</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SlugField</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c"># this field is never updated!</span>
+</pre></div>
+<p>The total field is never actually updated it is just there to have a property
+to display the total from the raw query. If you have never used a <a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/db/sql/">raw
+query</a> this is a great use case for it. Raw queries allow you to run
+any custom SQL and return the Model objects. In this example the total for any
+one location is the sum of all the people in that location. Here is what that
+looks like in SQL:</p>
+<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">july_user</span><span class="p">.</span><span class="n">location_id</span> <span class="k">AS</span> <span class="n">slug</span><span class="p">,</span>
+    <span class="n">people_location</span><span class="p">.</span><span class="n">name</span> <span class="k">AS</span> <span class="n">name</span><span class="p">,</span>
+    <span class="k">SUM</span><span class="p">(</span><span class="n">game_player</span><span class="p">.</span><span class="n">points</span><span class="p">)</span> <span class="k">AS</span> <span class="n">total</span>
+    <span class="k">FROM</span> <span class="n">game_player</span><span class="p">,</span> <span class="n">july_user</span><span class="p">,</span> <span class="n">people_location</span>
+    <span class="k">WHERE</span> <span class="n">game_player</span><span class="p">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">july_user</span><span class="p">.</span><span class="n">id</span>
+    <span class="k">AND</span> <span class="n">july_user</span><span class="p">.</span><span class="n">location_id</span> <span class="o">=</span> <span class="n">people_location</span><span class="p">.</span><span class="n">slug</span>
+    <span class="k">AND</span> <span class="n">game_player</span><span class="p">.</span><span class="n">game_id</span> <span class="o">=</span> <span class="o">%</span><span class="n">s</span>
+    <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">july_user</span><span class="p">.</span><span class="n">location_id</span>
+    <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">total</span> <span class="k">DESC</span>
+    <span class="k">LIMIT</span> <span class="mi">50</span><span class="p">;</span>
+</pre></div>
+<p>The magic is all in the &quot;GROUP BY&quot; statement. This SQL
+takes all the players (people who commited during the month) groups them by
+their location and sums up all their scores. Also you will notice it's returning
+the fields ('slug', 'name', 'total') which are the same fields on the Location
+model. All it needs is the game id and it will return the top 50 locations:</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">query</span> <span class="o">=</span> <span class="n">Location</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">raw</span><span class="p">(</span><span class="n">LOCATION_SQL</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">locations</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">query</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="n">locations</span>
+<span class="p">[</span><span class="o">&lt;</span><span class="n">Location</span><span class="p">:</span> <span class="n">Atlanta</span><span class="p">,</span> <span class="n">GA</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">Location</span><span class="p">:</span> <span class="n">Philadelphia</span><span class="p">,</span> <span class="n">PA</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">Location</span><span class="p">:</span> <span class="n">Boston</span><span class="p">,</span> <span class="n">MA</span><span class="p">,</span> <span class="n">USA</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">&lt;</span><span class="n">Location</span><span class="p">:</span> <span class="n">Austin</span><span class="p">,</span> <span class="n">TX</span><span class="o">&gt;</span><span class="p">,</span>
+ <span class="o">...</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">atl</span> <span class="o">=</span> <span class="n">locations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="n">atl</span><span class="o">.</span><span class="n">name</span>
+<span class="n">Atlanta</span><span class="p">,</span> <span class="n">GA</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">print</span> <span class="n">atl</span><span class="o">.</span><span class="n">total</span>
+<span class="mi">1625</span>
+</pre></div>
+<div class="warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">I you plan on using raw queries be sure <em>not</em> to use string
+formatting on the SQL. This will protect you from <a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/db/sql/#passing-parameters-into-raw">SQL injection attacks</a>.</p>
+</div>
+<p>This is cleaner and more exact in comparison to the old code. Now
+the locations and teams are up to date without a <a class="reference external" href="https://developers.google.com/appengine/articles/deferred">deferred task</a> or other
+background tasks. <a class="reference external" href="http://en.wikipedia.org/wiki/Database_normalization">Normalization</a> FTW!</p>
+</div>
+<div class="section" id="migrations">
+<h3>Migrations</h3>
+<p>The <a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/overview">Datastore</a> on <a class="reference external" href="https://developers.google.com/appengine/">Google Appengine</a> like other <a class="reference external" href="http://en.wikipedia.org/wiki/NoSQL">NoSQL</a> databases does not
+require any schema modifications or table creation staments. This is great for
+development as you can freely change your data models or add new ones without
+any errors or extra work. Tranditional <a class="reference external" href="http://en.wikipedia.org/wiki/Relational_database">relational databases</a> require a bit
+more hand holding. If you haven't heard it yet you should use <a class="reference external" href="http://south.readthedocs.org/en/0.7.6/">South</a> to manage
+migrations. On top of managing the standard <a class="reference external" href="http://south.readthedocs.org/en/0.7.6/tutorial/part1.html#changing-the-model">alter table</a> statements it also
+provides support for <a class="reference external" href="http://south.readthedocs.org/en/0.7.6/tutorial/part3.html#data-migrations">data migrations</a> as well.</p>
+</div>
+</div>
+<div class="section" id="wrap-up">
+<h2>Wrap up</h2>
+<p>Moving away from a complete <a class="reference external" href="http://en.wikipedia.org/wiki/Platform_as_a_service">PAAS</a> solution can be a little scary. Thankfully
+there are a number of projects that can help your transition. I plan on
+detailing other aspects of the site in this blog as well. Hit the comment
+section up if you have any questions!</p>
+</div>
+
+  </div><!-- /.entry-content -->
+  <div id="disqus_thread"></div>
+</section>
+
+	   	</div>
+	   	<hr />
+       <div class="footer">
+         Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+       </div>
+	   </div>       	
+     </div>      
+
+
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'julythonblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</body>
+</html>

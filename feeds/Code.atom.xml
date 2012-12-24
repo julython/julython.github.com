@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Julython Blog</title><link href="http://blog.julython.org/" rel="alternate"></link><link href="http://blog.julython.org/feeds/all-en.atom.xml" rel="self"></link><id>http://blog.julython.org/</id><updated>2012-12-24T20:12:00-06:00</updated><entry><title>Julython Code Refresh</title><link href="http://blog.julython.org/2012/Dec/julython-code-refresh/" rel="alternate"></link><updated>2012-12-24T20:12:00-06:00</updated><author><name>Robert Myers</name></author><id>tag:blog.julython.org,2012-12-24:2012/Dec/julython-code-refresh/</id><summary type="html">&lt;p&gt;When we launched over 6 months ago the site was built on &lt;a class="reference external" href="https://developers.google.com/appengine/"&gt;Google Appengine&lt;/a&gt;.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Julython Blog</title><link href="http://blog.julython.org/" rel="alternate"></link><link href="http://blog.julython.org/feeds/Code.atom.xml" rel="self"></link><id>http://blog.julython.org/</id><updated>2012-12-24T20:12:00-06:00</updated><entry><title>Julython Code Refresh</title><link href="http://blog.julython.org/2012/Dec/julython-code-refresh/" rel="alternate"></link><updated>2012-12-24T20:12:00-06:00</updated><author><name>Robert Myers</name></author><id>tag:blog.julython.org,2012-12-24:2012/Dec/julython-code-refresh/</id><summary type="html">&lt;p&gt;When we launched over 6 months ago the site was built on &lt;a class="reference external" href="https://developers.google.com/appengine/"&gt;Google Appengine&lt;/a&gt;.
 The site was built with &lt;a class="reference external" href="http://djangoproject.org"&gt;Django&lt;/a&gt; but used the builtin &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/overview"&gt;datastore&lt;/a&gt; for models.
 &lt;a class="reference external" href="https://developers.google.com/appengine/"&gt;Google Appengine&lt;/a&gt; provides a complete set of tools to run any web application.
 Running on a &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Platform_as_a_service"&gt;PAAS&lt;/a&gt; removes a lot of the headaches associated with running a
@@ -198,21 +198,4 @@ there are a number of projects that can help your transition. I plan on
 detailing other aspects of the site in this blog as well. Hit the comment
 section up if you have any questions!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="python"></category><category term="opensource"></category></entry><entry><title>Julython in January? J(an)ulython</title><link href="http://blog.julython.org/2012/Dec/julython-in-january-janulython/" rel="alternate"></link><updated>2012-12-12T12:12:00-06:00</updated><author><name>Robert Myers</name></author><id>tag:blog.julython.org,2012-12-12:2012/Dec/julython-in-january-janulython/</id><summary type="html">&lt;p&gt;You heard it right, Julython is back, never mind the calendar. J(an)ulython
-is fast approaching so you better get ready. Time to dust off those open source
-libraries you haven't touched since August. Another 31 days and nights to
-commit like it's going out of style. Already around the world J(an)ulython
-&amp;quot;Kick off&amp;quot; parties are being planned for the night of December 31st, there is
-probably one near you too! Be sure to drunkenly challenge the others at the
-party to beat your score. Remember to party responsibly though, don't push
-your commits until the morning.&lt;/p&gt;
-&lt;p&gt;Why in January? Many projects release on a 6 month schedule. We feel that
-in order to stay fresh you should at least match that with your own projects.
-January also has that whole &amp;quot;New Years Resolution&amp;quot; thing too.
-But let's face it, running is hard, wouldn't you rather write some Python?&lt;/p&gt;
-&lt;p&gt;We're busy updating the site, cause we haven't touched it in 6 months either :)
-But you can still look over the past results and see who you need to beat this
-time. If you still have your web hook from last time you are all set. If not
-stay tuned and we'll update everyone when the site is ready for testing again.&lt;/p&gt;
-&lt;p&gt;Head on over to &lt;a class="reference external" href="http://www.julython.org/"&gt;http://www.julython.org/&lt;/a&gt; Today!&lt;/p&gt;
 </summary><category term="python"></category><category term="opensource"></category></entry></feed>
