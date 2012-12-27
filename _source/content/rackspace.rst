@@ -2,7 +2,7 @@ Julython Code Refresh
 =================================
 
 :author: Robert Myers
-:date: 2012-12-24 20:12
+:date: 2012-12-27 13:12
 :category: Code
 :tags: python, opensource
 :style: participating
