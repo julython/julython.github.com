@@ -8,25 +8,22 @@ Julython Code Refresh
 :style: participating
 :summary: Julython is now running on Rackspace
 
-When we launched over 6 months ago the site was built on `Google Appengine`_. 
-The site was built with Django_ but used the builtin datastore_ for models. 
+When we launched over 6 months ago, Julython was built on `Google Appengine`_. 
+The site was built with Django_, but used the built-in datastore_ for models. 
 `Google Appengine`_ provides a complete set of tools to run any web application.
 Running on a PAAS_ removes a lot of the headaches associated with running a 
 production site.   
 
 Then last month I started a new job at Rackspace_ working on the 
-`Cloud Database`_ product which is `open source`_. It is really great to work
-for a company that recognizes the power of open source. Naturally I have to dog 
-food my own product, that and they are footing the bill :) So I got to work on
+`Cloud Database`_ product, which is `open source`_. It is really great to work
+for a company that recognizes the power of open source. So I got to work on
 converting the site to use standard Django_ models, Tastypie_, `Django Social
 Auth`_, and South_. I am quite pleased with the results. Ironically the site 
 now takes advantange of more open source projects, which we are trying to 
 promote :)
 
-Architechture
+Architecture
 -------------
-
-.. warning:: I work for Rackspace_ 'insert standard disclaimer here'. 
 
 The new site uses a couple of products from the cloud services at Rackspace_.
 First there is a `Cloud Load Balancer`_ in front of two 512 MB `Cloud Servers`_. 
@@ -36,27 +33,24 @@ nodes talk to a 512 MB MySQL `Cloud Database`_.
 Appengine has a great tool for `monitoring performance`_ of your web apps. The 
 dashboard has a number of graphs as well to check on the health of your web
 app. This is hard to give up, which is why I turned to `New Relic`_. With 
-`New Relic`_ you get much_ more_ data_, I do not regret the switch. (well, it
-costs money but still, it is worth it)
+`New Relic`_ you get much_ more_ data_; I do not regret the switch. 
 
-<shameless plug>
 
-During `J(an)ulython`_ I'll be working on my project cannula_ which is a 
+During `J(an)ulython`_ I'll be working on my project cannula_, which is a 
 deployment tool for websites. Using cannula_ I can deploy the site like so::
 
 	$ git push cannula master
 
-</shameless plug>
 
 Living on the Edge
 ------------------
 
-Even though Django 1.5 is still in beta it is worth running to get 
+Even though Django 1.5 is still in beta, it is worth running to get 
 the new `configurable User model`_. This made the transition super easy from 
 webapp2_ user models on Appengine to a 
 custom class to interact with `Django Social Auth`_ properly. Webapp2_ stores the
 auth_ids in the format 'provider:uid' in a list property on the User class. It 
-also provides methods to add new auth ids etc. Now with Django 1.5 you can alter
+also provides methods to add new auth ids, etc. Now with Django 1.5 you can alter
 the User Class to add custom fields or methods. Here is the User model from
 Julthon:
 
@@ -131,27 +125,28 @@ get a user or add properties to it. The commit model in this case really should
 not care about the Social Auth models.
 
 
-SQL Oh How I Missed You
------------------------
+SQL, Oh How I Missed You
+------------------------
 
-I love NoSQL, I hate altering tables. It is even better with Appengine as the
-datastore is just there, zero configuration and no syncing tables. It's a lazy
-developers dream come true. My biggest complaints of the Datastore is the
-lack of a (fast and complete) `count method`_ and if you want to do a query 
-there has to be an `Index built for it`_. Some things are just easier to do 
-with SQL. 
+The Appengine Datastore_ is a NoSQL_ database which is really easy to work with.
+There is no configuration needed, and you don't have to create tables or alter 
+your schema in order to make changes. My biggest complaints of the Datastore_ 
+are the lack of a (fast and complete) `count method`_ and if you want to do a 
+query there has to be an `Index built for it`_. While there is more overhead
+associated with SQL databases, some things are much easier to do, which is
+one reason we decided to make the switch.
 
 Location and Team Totals
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-One major pain point with the code during July was when people changed
+One major pain point with the code last July was when people changed
 their location or team. Since all of the data was denormalized_ this meant that 
 both location or team totals needed to be updated. Appengine has a nice builtin 
 `deferred task`_ tool to spawn background tasks to do this. But in the SQL 
-world this is just a simple JOIN query. Okay it is slightly complex, but still 
+world this is just a simple JOIN query. OK, it is slightly complex, but still 
 easy to pull off with a `raw query`_. 
 
-First here is the Location model:
+First, here is the Location model:
 
 .. code-block:: python
 
@@ -160,10 +155,10 @@ First here is the Location model:
 	    name = models.CharField(max_length=64, blank=False)
 	    total = models.IntegerField(default=0) # this field is never updated!
 
-The total field is never actually updated it is just there to have a property
+The total field is never actually updated; it is just there to have a property
 to display the total from the raw query. If you have never used a `raw
 query`_ this is a great use case for it. Raw queries allow you to run
-any custom SQL and return the Model objects. In this example the total for any
+any custom SQL and return the Model objects. In this example, the total for any
 one location is the sum of all the people in that location. Here is what that 
 looks like in SQL:
 
@@ -181,9 +176,9 @@ looks like in SQL:
 	    LIMIT 50;
 
 The magic is all in the "GROUP BY" statement. This SQL
-takes all the players (people who commited during the month) groups them by
+takes all the players (people who commited during the month), groups them by
 their location and sums up all their scores. Also you will notice it's returning
-the fields ('slug', 'name', 'total') which are the same fields on the Location 
+the fields ('slug', 'name', 'total'), which are the same fields on the Location 
 model. All it needs is the game id and it will return the top 50 locations:
 
 .. code-block:: python
@@ -206,7 +201,7 @@ model. All it needs is the game id and it will return the top 50 locations:
 .. warning:: I you plan on using raw queries be sure *not* to use string
     formatting on the SQL. This will protect you from `SQL injection attacks`_.
 
-This is cleaner and more exact in comparison to the old code. Now
+This is cleaner and more exact compared to the old code. Now
 the locations and teams are up to date without a `deferred task`_ or other
 background tasks. Normalization_ FTW!
 
@@ -215,7 +210,7 @@ Migrations
 
 The Datastore_ on `Google Appengine`_ like other NoSQL_ databases does not
 require any schema modifications or table creation staments. This is great for
-development as you can freely change your data models or add new ones without
+development, as you can freely change your data models or add new ones without
 any errors or extra work. Tranditional `relational databases`_ require a bit
 more hand holding. If you haven't heard it yet you should use South_ to manage
 migrations. On top of managing the standard `alter table`_ statements it also

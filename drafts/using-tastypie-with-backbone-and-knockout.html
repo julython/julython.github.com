@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Using Tastypie with Backbone and Knockout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="31 days and nights of Python">
+    <link href=".././theme/css/main.css" rel="stylesheet" type="text/css"/>
+    <link href=".././theme/css/pygments.css" rel="stylesheet" type="text/css"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'/>
+    <link href='http://fonts.googleapis.com/css?family=Doppio+One' rel='stylesheet' type='text/css'/>
+    <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+    
+    
+  </head>
+
+<body id="index" class="home">
+    <div class="navbar navbar-fixed-top" id="topnav">
+      <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="../."><img class="logo" alt="julython.org" src=".././theme/images/julython_logo_small.png"/> Blog</a>
+            
+            <div class="nav">
+              <ul class="nav">
+                
+                
+                
+                
+                
+                    <li class="active"><a href=".././category/code.html">Code</a></li>
+                
+                    <li ><a href=".././category/julython.html">Julython</a></li>
+                
+             </ul>
+           </div>
+         </div>
+       </div>
+     </div>
+
+<a href="https://github.com/julython/julython.org">
+
+<img style="position: absolute; top: 0; right: 0; border: 0; z-index: 9999;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" />
+
+</a>
+
+        
+     <div class="container-narrow  section-container ">
+	   <div class="row-fluid">
+	   	<div class="">
+	   		
+        
+<section id="content" class="body">
+  <header>
+    <h2 class="participating">Using Tastypie with Backbone and Knockout</h2>
+    
+	<a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="julython">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+	
+  </header>
+  <footer class="post-info">
+    <abbr class="published" title="2012-12-27T20:12:00">
+      Thu 27 December 2012
+    </abbr>
+    
+    <address class="vcard author">
+      By <a class="url fn" href=".././author/robert-myers.html">Robert Myers</a>
+    </address>
+    
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    <p>Since July I have been working a little bit more on the UI side of the web.
+For <a class="reference external" href="http://www.julython.org">J(an)ulython</a> the site uses <a class="reference external" href="http://django-tastypie.readthedocs.org/en/latest/toc.html">Tastypie</a>, <a class="reference external" href="http://backbonejs.org">Backbonejs</a>, <a class="reference external" href="http://knockoutjs.com/">Knockoutjs</a> and
+<a class="reference external" href="http://kmalakoff.github.com/knockback/">Knockbackjs</a> to display an endless scroll of commits. Because, this is what
+all the cool kids are doing these days :) Let me explain each piece and how
+we use them.</p>
+<div class="section" id="tastypie">
+<h2>Tastypie</h2>
+<p>From the site &quot;Tastypie is an webservice API framework for Django. It provides
+a convenient, yet powerful and highly customizable, abstraction for creating
+REST-style interfaces.&quot; That about sums it up :) For Julython it just needed
+a little bit of tweaking to get our api's up and running.</p>
+<p>First you need to setup the api routing (urls):</p>
+<div class="highlight"><pre><span class="c"># urls.py</span>
+<span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="n">url</span>
+<span class="kn">from</span> <span class="nn">tastypie.api</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="kn">from</span> <span class="nn">july</span> <span class="kn">import</span> <span class="n">api</span>
+
+<span class="n">v1_api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="s">&#39;v1&#39;</span><span class="p">)</span>
+<span class="n">v1_api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">CommitResource</span><span class="p">())</span>
+<span class="n">v1_api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">ProjectResource</span><span class="p">())</span>
+<span class="n">v1_api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">UserResource</span><span class="p">())</span>
+
+<span class="n">urlpatterns</span> <span class="o">+=</span> <span class="n">patterns</span><span class="p">(</span>
+        <span class="n">url</span><span class="p">(</span><span class="s">r&#39;^api/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">v1_api</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span>
+<span class="p">)</span>
+</pre></div>
+<p>This sets up the following api urls:</p>
+<ul class="simple">
+<li><tt class="docutils literal">/api/v1/commit/</tt></li>
+<li><tt class="docutils literal">/api/v1/project/</tt></li>
+<li><tt class="docutils literal">/api/v1/user/</tt></li>
+</ul>
+<p>Now I just need to add my Resources in the api module. The Project and User
+resources are fairly simple as the defaults work just fine. The Commit
+resource is only slightly more complex as I wanted to optimized the database
+query a little bit. The commit resource also needs to create a gravatar image
+for commits with no user.</p>
+<p>Here is what the <tt class="docutils literal">api.py</tt> file looks like:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span>
+<span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ALL</span>
+<span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ALL_WITH_RELATIONS</span>
+<span class="kn">from</span> <span class="nn">tastypie</span> <span class="kn">import</span> <span class="n">fields</span>
+
+<span class="kn">from</span> <span class="nn">july.people.models</span> <span class="kn">import</span> <span class="n">Commit</span><span class="p">,</span> <span class="n">Project</span>
+<span class="kn">from</span> <span class="nn">july.models</span> <span class="kn">import</span> <span class="n">User</span>
+
+<span class="k">class</span> <span class="nc">UserResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">excludes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">,</span> <span class="s">&#39;email&#39;</span><span class="p">,</span> <span class="s">&#39;is_superuser&#39;</span><span class="p">,</span> <span class="s">&#39;is_staff&#39;</span><span class="p">,</span> <span class="s">&#39;is_active&#39;</span><span class="p">]</span>
+
+<span class="k">class</span> <span class="nc">ProjectResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">CommitResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">UserResource</span><span class="p">,</span> <span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProjectResource</span><span class="p">,</span> <span class="s">&#39;project&#39;</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="s">&#39;project&#39;</span><span class="p">)</span>
+        <span class="n">allowed_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;get&#39;</span><span class="p">]</span>
+        <span class="n">filtering</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="n">ALL_WITH_RELATIONS</span><span class="p">,</span>
+            <span class="s">&#39;project&#39;</span><span class="p">:</span> <span class="n">ALL_WITH_RELATIONS</span><span class="p">,</span>
+            <span class="s">&#39;timestamp&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;exact&#39;</span><span class="p">,</span> <span class="s">&#39;range&#39;</span><span class="p">,</span> <span class="s">&#39;gt&#39;</span><span class="p">,</span> <span class="s">&#39;lt&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">gravatar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a link to gravatar image.&quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;http://www.gravatar.com/avatar/</span><span class="si">%s</span><span class="s">?s=48&#39;</span>
+        <span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">hashed</span> <span class="o">=</span> <span class="n">md5</span><span class="p">(</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">url</span> <span class="o">%</span> <span class="n">hashed</span>
+
+    <span class="k">def</span> <span class="nf">dehydrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">):</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;email&#39;</span><span class="p">)</span>
+        <span class="n">gravatar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gravatar</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;project_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;project_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s">&#39;project-details&#39;</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">slug</span><span class="p">])</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;picture_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+                                             <span class="s">&#39;picture_url&#39;</span><span class="p">,</span>
+                                             <span class="n">gravatar</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bundle</span>
+</pre></div>
+<p>The two interesting details here are the extra fields and the <tt class="docutils literal">dehydrate</tt>
+method. First the <tt class="docutils literal">fields.ForeignKey</tt> allow you to filter by the related
+field. To make the the query more efficient be sure to add in the call to
+<tt class="docutils literal"><span class="pre">select_related('model_one',</span> 'model_two')</tt> to the queryset. Next the
+<tt class="docutils literal">dehydrate</tt> method allows you to add in extra details not stored in the
+model. Here I am adding properties from the related models, and also setting
+a default image with gravatar for commits from non-registered users. If you
+like you can also pass <tt class="docutils literal">full=True</tt> to the <tt class="docutils literal">fields.ForeignKey</tt> to add all
+the attributes from the related resource.</p>
+<p>Since we only need readonly access in the api this is all we need to do.
+There are many more options available so check it out. If you do wish to make
+your <a class="reference external" href="http://django-tastypie.readthedocs.org/en/latest/toc.html">Tastypie</a> api's work well with backbone have a look at
+<a class="reference external" href="https://github.com/PaulUithol/backbone-tastypie">backbone-tastypie</a>.</p>
+</div>
+<div class="section" id="backbonejs">
+<h2>Backbonejs</h2>
+<p>Now that we have our REST-ful api we need to consume it. <a class="reference external" href="http://backbonejs.org">Backbonejs</a> is a light
+weight javascript library which provides models and collections that map to
+you REST-ful api. The models and collections have attributes you can override
+with custom functions making it very flexible.</p>
+<p>The commit model is pretty basic here by default backbone will assume that the
+resource will live at the <tt class="docutils literal">urlRoot/id</tt> which is what we want:</p>
+<div class="highlight"><pre><span class="cm">/* Namespace all our custom objects */</span>
+<span class="kd">var</span> <span class="nx">JULY</span> <span class="o">=</span> <span class="nx">JULY</span> <span class="o">||</span> <span class="p">{};</span>
+
+<span class="nx">JULY</span><span class="p">.</span><span class="nx">Commit</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+        <span class="nx">urlRoot</span><span class="o">:</span> <span class="s1">&#39;/api/v1/commit/&#39;</span>
+<span class="p">});</span>
+</pre></div>
+<p>The collection is slightly more complex. First we need to provide a constructor
+function in order to pass in options. Our commit api can be filtered by
+'project' or 'user', it also takes optional arguments for 'limit' and 'offset'.</p>
+<div class="highlight"><pre><span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitCollection</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+        <span class="nx">model</span><span class="o">:</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">Commit</span><span class="p">,</span>
+
+        <span class="c1">// Constructor method</span>
+        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">projectId</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">projectId</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">userId</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">userId</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">limit</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">limit</span> <span class="o">||</span> <span class="mi">20</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">offset</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">offset</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">total</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// set after fetch</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">hasMore</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> <span class="c1">// set after fetch</span>
+        <span class="p">},</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">The first optional argument to the initialize function is always a
+list of models. So you would create this collection like:
+<tt class="docutils literal">var c = new JULY.CommitCollection(null, {limit: 100})</tt></p>
+</div>
+<p>Now we need to pass our arguments to the url so we need to create a url
+function and a helper method to generate the query args:</p>
+<div class="highlight"><pre><span class="c1">// Custom url with query parameters added in</span>
+<span class="nx">url</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span><span class="k">return</span> <span class="s1">&#39;/api/v1/commit/?&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">params</span><span class="p">()},</span>
+
+<span class="c1">// return the parameters for the url</span>
+<span class="nx">params</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="p">{</span><span class="nx">limit</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">limit</span><span class="p">,</span> <span class="nx">offset</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">offset</span><span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">projectId</span><span class="p">)</span> <span class="p">{</span><span class="nx">p</span><span class="p">.</span><span class="nx">project</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">projectId</span><span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">)</span> <span class="p">{</span><span class="nx">p</span><span class="p">.</span><span class="nx">user</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">userId</span><span class="p">}</span>
+        <span class="k">return</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">param</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
+<span class="p">},</span>
+</pre></div>
+<p>The last part of the puzzle is how to parse the results from the fetch call:</p>
+<div class="highlight"><pre>        <span class="c1">// parse the results from the fetch() call.</span>
+        <span class="nx">parse</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">total</span> <span class="o">=</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">total_count</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">offset</span> <span class="o">=</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">offset</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">limit</span><span class="p">;</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">hasMore</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">total</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">return</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">objects</span><span class="p">;</span>
+        <span class="p">}</span>
+
+<span class="p">});</span>
+</pre></div>
+<p>Now we can test our api and backbone collection in our browser:</p>
+<div class="highlight"><pre><span class="o">&gt;</span> <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitCollection</span><span class="p">(</span><span class="kc">null</span><span class="p">,{</span><span class="nx">projectId</span><span class="o">:</span> <span class="mi">1</span><span class="p">});</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">total</span>
+<span class="mi">0</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">fetch</span><span class="p">()</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">total</span>
+<span class="mi">649</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">length</span>
+<span class="mi">20</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">models</span>
+<span class="p">[</span><span class="nx">child</span><span class="p">,</span> <span class="nx">child</span><span class="p">,...]</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">models</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;hash&#39;</span><span class="p">)</span>
+<span class="s2">&quot;347f32a946d41b59ea3f8b3dad07f73f4593d1e7&quot;</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">models</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">)</span>
+<span class="s2">&quot;This is a fancy commit message!&quot;</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">add</span><span class="o">:</span> <span class="kc">true</span><span class="p">})</span> <span class="c1">// add=true will append the new models</span>
+<span class="o">&gt;</span> <span class="nx">c</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">length</span>
+<span class="mi">40</span>
+</pre></div>
+<p>This just scratches the surface of what you can do with <a class="reference external" href="http://backbonejs.org">Backbonejs</a>. As
+you can see with very little code we already have an api and a client library
+to read it. Now we just need to display the commits to the user. You could
+do this with Backbone and it would probably work just fine. However I find
+that Backbone views just end up being a bunch of boiler plate logic and they
+have to be manually sync'd up.</p>
+</div>
+<div class="section" id="knockout-and-knockback">
+<h2>Knockout and Knockback</h2>
+<p><a class="reference external" href="http://knockoutjs.com/">Knockoutjs</a> is a declarative binding UI library that applies the
+<a class="reference external" href="http://knockoutjs.com/documentation/observables.html#mvvm_and_view_models">Model-View-View Model</a> (MVVM) pattern. It provides dependancy tracking and
+Automatic UI refresh. It is really great as it handles nearly every UI
+interaction you would expect plus has a customizable binding system to
+cover all the other use cases.</p>
+<p>There are a number of built in bindings, here are the main ones we'll use:</p>
+<ul class="simple">
+<li>foreach: loops over an list of item and duplicates a section of markup</li>
+<li>text: Replaces the text of the element with the attribute value</li>
+<li>attr: Replaces the attributes of an element</li>
+<li>visible: If the value is true shows the element</li>
+</ul>
+<p>Here is what our commit list looks like:</p>
+<div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;commits&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-bind=</span><span class="s">&quot;foreach: commits&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;media&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">&quot;media-object&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;attr: {src: url, alt: message}&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;media-body&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;h4</span> <span class="na">class=</span><span class="s">&quot;media-heading&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;text: timestamp&quot;</span><span class="nt">&gt;&lt;/h4&gt;</span>
+        <span class="nt">&lt;strong</span> <span class="na">data-bind=</span><span class="s">&quot;text: message&quot;</span><span class="nt">&gt;&lt;/strong&gt;</span>
+        <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;hash&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">data-bind=</span><span class="s">&quot;visible: url, attr:{href:url }&quot;</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;text: hash&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+        <span class="nt">&lt;/a&gt;</span>
+        <span class="c">&lt;!-- attributes are functions,</span>
+<span class="c">             so to check the negative you have to call it --&gt;</span>
+        <span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;visible: !url(), text: hash&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+      <span class="nt">&lt;/p&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+  <span class="c">&lt;!--</span> <span class="nx">simple</span> <span class="nx">example</span> <span class="nx">of</span> <span class="nx">view</span> <span class="nx">binding</span> <span class="o">--&gt;</span>
+  <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="p">{</span>
+     <span class="nx">commits</span><span class="o">:</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">observableArray</span><span class="p">([</span>
+            <span class="p">{</span> <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/foo/&quot;</span><span class="p">,</span> <span class="nx">timestamp</span><span class="o">:</span> <span class="s2">&quot;12-02-2012&quot;</span><span class="p">,</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Foo&quot;</span> <span class="p">},</span>
+            <span class="p">{</span> <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/bar/&quot;</span><span class="p">,</span> <span class="nx">timestamp</span><span class="o">:</span> <span class="s2">&quot;12-02-2012&quot;</span><span class="p">,</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Bar&quot;</span> <span class="p">},</span>
+            <span class="p">{</span> <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/bean/&quot;</span><span class="p">,</span> <span class="nx">timestamp</span><span class="o">:</span> <span class="s2">&quot;12-02-2012&quot;</span><span class="p">,</span> <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Beans&quot;</span> <span class="p">}</span>
+        <span class="p">]);</span>
+  <span class="p">}</span>
+  <span class="nx">ko</span><span class="p">.</span><span class="nx">applyBindings</span><span class="p">(</span><span class="nx">view</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+<p>The beauty of the declarative binding is that you can separate all the logic
+from you models and the views that display them. This is alot like the MVC
+pattern Django and other frameworks preach.</p>
+<p>The major downside to using <a class="reference external" href="http://knockoutjs.com/">Knockoutjs</a> is that it does next to nothing with
+your REST-ful urls. That exercise if left up to the user. Which is where
+<a class="reference external" href="http://kmalakoff.github.com/knockback/">Knockbackjs</a> comes in.</p>
+<p><a class="reference external" href="http://kmalakoff.github.com/knockback/">Knockbackjs</a> as its name suggests glues <a class="reference external" href="http://knockoutjs.com/">Knockoutjs</a> and <a class="reference external" href="http://backbonejs.org">Backbonejs</a> together.
+With <a class="reference external" href="http://kmalakoff.github.com/knockback/">Knockbackjs</a> you can use the powerful ORM that backbone provides with
+the automatically updating UI of <a class="reference external" href="http://knockoutjs.com/">Knockoutjs</a>. Knockback provides a few functions
+to assist in creating your view and automatically wraps the Backbone models
+or collections in Knockout obverables.</p>
+<p>Since we like the <a class="reference external" href="http://backbonejs.org">Backbonejs</a> method of extending we first mimic it. This
+allows us to have a initialize method in our view models:</p>
+<div class="highlight"><pre><span class="nx">JULY</span><span class="p">.</span><span class="nx">ViewModel</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">initialize</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">JULY</span><span class="p">.</span><span class="nx">ViewModel</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">});</span>
+<span class="nx">JULY</span><span class="p">.</span><span class="nx">ViewModel</span><span class="p">.</span><span class="nx">extend</span><span class="o">=</span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">;</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference external" href="http://kmalakoff.github.com/knockback/">Knockbackjs</a> views are just standard Javascript objects.</p>
+</div>
+<p>Now lets create a view for our commits:</p>
+<div class="highlight"><pre><span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitsView</span> <span class="o">=</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">ViewModel</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+
+        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitCollection</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+            <span class="c1">// prepopulate the collection</span>
+            <span class="nx">c</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">add</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">commits</span> <span class="o">=</span> <span class="nx">kb</span><span class="p">.</span><span class="nx">collectionObservable</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
+        <span class="p">},</span>
+
+        <span class="c1">// bind this function to the parent div and when</span>
+        <span class="c1">// the element is scrolled call the fetch method when</span>
+        <span class="c1">// we are near the bottom.</span>
+        <span class="c1">// http://jsfiddle.net/rniemeyer/KdPmF/</span>
+        <span class="nx">scrolled</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">elem</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">elem</span><span class="p">.</span><span class="nx">scrollTop</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nx">elem</span><span class="p">.</span><span class="nx">scrollHeight</span> <span class="o">-</span> <span class="nx">elem</span><span class="p">.</span><span class="nx">offsetHeight</span> <span class="o">-</span> <span class="mi">200</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="c1">// Check the collection to see if there are more commits to fetch</span>
+    <span class="nx">hasMore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">commits</span><span class="p">.</span><span class="nx">collection</span><span class="p">().</span><span class="nx">hasMore</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="c1">// Fetch more commits from the collection</span>
+        <span class="nx">fetch</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hasMore</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">commits</span><span class="p">.</span><span class="nx">collection</span><span class="p">().</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">add</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+<p>Thats it, now we just need to bind this in our template logic.</p>
+<div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;commits&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-bind=</span><span class="s">&quot;foreach: commits, event: { scroll: scrolled }&quot;</span><span class="nt">&gt;</span>
+
+     <span class="c">&lt;!-- the rest is copied from above --&gt;</span>
+
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+    <span class="c1">// {{ project.id }} is populated by Django in our view logic</span>
+    <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitsView</span><span class="p">({</span><span class="nx">projectId</span><span class="o">:</span> <span class="p">{{</span> <span class="nx">project</span><span class="p">.</span><span class="nx">id</span> <span class="p">}}});</span>
+    <span class="nx">ko</span><span class="p">.</span><span class="nx">applyBindings</span><span class="p">(</span><span class="nx">view</span><span class="p">);</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+<div class="section" id="custom-bindings">
+<h3>Custom Bindings</h3>
+<p>Now we just need to make one minor improvement, lets make our dates fancy
+with a jQuery plugin <a class="reference external" href="http://timeago.yarp.com/">timeago</a>. We could just use it on the page in the script
+tag but lets do it the proper way with a custom binding.</p>
+<div class="highlight"><pre><span class="nx">ko</span><span class="p">.</span><span class="nx">bindingHandlers</span><span class="p">.</span><span class="nx">timeago</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">valueAccessor</span><span class="p">,</span> <span class="nx">allBindingsAccessor</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// First get the latest data that we&#39;re bound to</span>
+        <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">valueAccessor</span><span class="p">(),</span> <span class="nx">allBindings</span> <span class="o">=</span> <span class="nx">allBindingsAccessor</span><span class="p">();</span>
+
+        <span class="c1">// Next, whether or not the supplied model property is observable,</span>
+        <span class="c1">// get its current value</span>
+        <span class="kd">var</span> <span class="nx">valueUnwrapped</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">utils</span><span class="p">.</span><span class="nx">unwrapObservable</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+
+        <span class="c1">// set the title attribute to the value passed</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">element</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="nx">valueUnwrapped</span><span class="p">);</span>
+
+        <span class="c1">// apply timeago to change the text of the element</span>
+        <span class="nx">$</span><span class="p">(</span><span class="nx">element</span><span class="p">).</span><span class="nx">timeago</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+<p>Now we apply our custom binding in the html like this:</p>
+<div class="highlight"><pre><span class="nt">&lt;h4</span> <span class="na">class=</span><span class="s">&quot;media-heading&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;timeago: timestamp&quot;</span><span class="nt">&gt;&lt;/h4&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="wrap-up">
+<h2>Wrap Up</h2>
+</div>
+
+  </div><!-- /.entry-content -->
+  <div id="disqus_thread"></div>
+</section>
+
+	   	</div>
+	   	<hr />
+       <div class="footer">
+         Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+       </div>
+	   </div>       	
+     </div>      
+
+
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'julythonblog'; 
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</body>
+</html>

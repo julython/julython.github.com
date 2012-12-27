@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Julython Blog</title><link href="http://blog.julython.org/" rel="alternate"></link><link href="http://blog.julython.org/feeds/all-en.atom.xml" rel="self"></link><id>http://blog.julython.org/</id><updated>2012-12-24T20:12:00-06:00</updated><entry><title>Julython Code Refresh</title><link href="http://blog.julython.org/2012/Dec/julython-code-refresh/" rel="alternate"></link><updated>2012-12-24T20:12:00-06:00</updated><author><name>Robert Myers</name></author><id>tag:blog.julython.org,2012-12-24:2012/Dec/julython-code-refresh/</id><summary type="html">&lt;p&gt;When we launched over 6 months ago the site was built on &lt;a class="reference external" href="https://developers.google.com/appengine/"&gt;Google Appengine&lt;/a&gt;.
-The site was built with &lt;a class="reference external" href="http://djangoproject.org"&gt;Django&lt;/a&gt; but used the builtin &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/overview"&gt;datastore&lt;/a&gt; for models.
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Julython Blog</title><link href="http://blog.julython.org/" rel="alternate"></link><link href="http://blog.julython.org/feeds/all-en.atom.xml" rel="self"></link><id>http://blog.julython.org/</id><updated>2012-12-24T20:12:00-06:00</updated><entry><title>Julython Code Refresh</title><link href="http://blog.julython.org/2012/Dec/julython-code-refresh/" rel="alternate"></link><updated>2012-12-24T20:12:00-06:00</updated><author><name>Robert Myers</name></author><id>tag:blog.julython.org,2012-12-24:2012/Dec/julython-code-refresh/</id><summary type="html">&lt;p&gt;When we launched over 6 months ago, Julython was built on &lt;a class="reference external" href="https://developers.google.com/appengine/"&gt;Google Appengine&lt;/a&gt;.
+The site was built with &lt;a class="reference external" href="http://djangoproject.org"&gt;Django&lt;/a&gt;, but used the built-in &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/overview"&gt;datastore&lt;/a&gt; for models.
 &lt;a class="reference external" href="https://developers.google.com/appengine/"&gt;Google Appengine&lt;/a&gt; provides a complete set of tools to run any web application.
 Running on a &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Platform_as_a_service"&gt;PAAS&lt;/a&gt; removes a lot of the headaches associated with running a
 production site.&lt;/p&gt;
 &lt;p&gt;Then last month I started a new job at &lt;a class="reference external" href="http://www.rackspace.com"&gt;Rackspace&lt;/a&gt; working on the
-&lt;a class="reference external" href="http://www.rackspace.com/cloud/public/databases/"&gt;Cloud Database&lt;/a&gt; product which is &lt;a class="reference external" href="https://github.com/stackforge/reddwarf"&gt;open source&lt;/a&gt;. It is really great to work
-for a company that recognizes the power of open source. Naturally I have to dog
-food my own product, that and they are footing the bill :) So I got to work on
+&lt;a class="reference external" href="http://www.rackspace.com/cloud/public/databases/"&gt;Cloud Database&lt;/a&gt; product, which is &lt;a class="reference external" href="https://github.com/stackforge/reddwarf"&gt;open source&lt;/a&gt;. It is really great to work
+for a company that recognizes the power of open source. So I got to work on
 converting the site to use standard &lt;a class="reference external" href="http://djangoproject.org"&gt;Django&lt;/a&gt; models, &lt;a class="reference external" href="http://django-tastypie.readthedocs.org/en/latest/tutorial.html"&gt;Tastypie&lt;/a&gt;, &lt;a class="reference external" href="http://django-social-auth.readthedocs.org/en/latest/"&gt;Django Social
 Auth&lt;/a&gt;, and &lt;a class="reference external" href="http://south.readthedocs.org/en/0.7.6/"&gt;South&lt;/a&gt;. I am quite pleased with the results. Ironically the site
 now takes advantange of more open source projects, which we are trying to
 promote :)&lt;/p&gt;
-&lt;div class="section" id="architechture"&gt;
-&lt;h2&gt;Architechture&lt;/h2&gt;
-&lt;div class="warning"&gt;
-&lt;p class="first admonition-title"&gt;Warning&lt;/p&gt;
-&lt;p class="last"&gt;I work for &lt;a class="reference external" href="http://www.rackspace.com"&gt;Rackspace&lt;/a&gt; 'insert standard disclaimer here'.&lt;/p&gt;
-&lt;/div&gt;
+&lt;div class="section" id="architecture"&gt;
+&lt;h2&gt;Architecture&lt;/h2&gt;
 &lt;p&gt;The new site uses a couple of products from the cloud services at &lt;a class="reference external" href="http://www.rackspace.com"&gt;Rackspace&lt;/a&gt;.
 First there is a &lt;a class="reference external" href="http://www.rackspace.com/cloud/public/loadbalancers/"&gt;Cloud Load Balancer&lt;/a&gt; in front of two 512 MB &lt;a class="reference external" href="http://www.rackspace.com/cloud/public/servers/"&gt;Cloud Servers&lt;/a&gt;.
 The two web nodes are running a &lt;a class="reference external" href="http://wiki.nginx.org/Main"&gt;nginx&lt;/a&gt; proxy in front of &lt;a class="reference external" href="http://gunicorn.org"&gt;gunicorn&lt;/a&gt;. The web
@@ -25,24 +20,21 @@ nodes talk to a 512 MB MySQL &lt;a class="reference external" href="http://www.r
 &lt;p&gt;Appengine has a great tool for &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/tools/appstats"&gt;monitoring performance&lt;/a&gt; of your web apps. The
 dashboard has a number of graphs as well to check on the health of your web
 app. This is hard to give up, which is why I turned to &lt;a class="reference external" href="http://newrelic.com"&gt;New Relic&lt;/a&gt;. With
-&lt;a class="reference external" href="http://newrelic.com"&gt;New Relic&lt;/a&gt; you get &lt;a class="reference external" href="https://newrelic.com/product/real-user-monitoring"&gt;much&lt;/a&gt; &lt;a class="reference external" href="https://newrelic.com/product/application-monitoring"&gt;more&lt;/a&gt; &lt;a class="reference external" href="https://newrelic.com/product/server-monitoring"&gt;data&lt;/a&gt;, I do not regret the switch. (well, it
-costs money but still, it is worth it)&lt;/p&gt;
-&lt;p&gt;&amp;lt;shameless plug&amp;gt;&lt;/p&gt;
-&lt;p&gt;During &lt;a class="reference external" href="http://www.julython.org"&gt;J(an)ulython&lt;/a&gt; I'll be working on my project &lt;a class="reference external" href="https://github.com/rmyers/cannula"&gt;cannula&lt;/a&gt; which is a
+&lt;a class="reference external" href="http://newrelic.com"&gt;New Relic&lt;/a&gt; you get &lt;a class="reference external" href="https://newrelic.com/product/real-user-monitoring"&gt;much&lt;/a&gt; &lt;a class="reference external" href="https://newrelic.com/product/application-monitoring"&gt;more&lt;/a&gt; &lt;a class="reference external" href="https://newrelic.com/product/server-monitoring"&gt;data&lt;/a&gt;; I do not regret the switch.&lt;/p&gt;
+&lt;p&gt;During &lt;a class="reference external" href="http://www.julython.org"&gt;J(an)ulython&lt;/a&gt; I'll be working on my project &lt;a class="reference external" href="https://github.com/rmyers/cannula"&gt;cannula&lt;/a&gt;, which is a
 deployment tool for websites. Using &lt;a class="reference external" href="https://github.com/rmyers/cannula"&gt;cannula&lt;/a&gt; I can deploy the site like so:&lt;/p&gt;
 &lt;pre class="literal-block"&gt;
 $ git push cannula master
 &lt;/pre&gt;
-&lt;p&gt;&amp;lt;/shameless plug&amp;gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="living-on-the-edge"&gt;
 &lt;h2&gt;Living on the Edge&lt;/h2&gt;
-&lt;p&gt;Even though Django 1.5 is still in beta it is worth running to get
+&lt;p&gt;Even though Django 1.5 is still in beta, it is worth running to get
 the new &lt;a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/auth/#auth-custom-user"&gt;configurable User model&lt;/a&gt;. This made the transition super easy from
 &lt;a class="reference external" href="http://webapp-improved.appspot.com/"&gt;webapp2&lt;/a&gt; user models on Appengine to a
 custom class to interact with &lt;a class="reference external" href="http://django-social-auth.readthedocs.org/en/latest/"&gt;Django Social Auth&lt;/a&gt; properly. &lt;a class="reference external" href="http://webapp-improved.appspot.com/"&gt;Webapp2&lt;/a&gt; stores the
 auth_ids in the format 'provider:uid' in a list property on the User class. It
-also provides methods to add new auth ids etc. Now with Django 1.5 you can alter
+also provides methods to add new auth ids, etc. Now with Django 1.5 you can alter
 the User Class to add custom fields or methods. Here is the User model from
 Julthon:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;django.db&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;models&lt;/span&gt;
@@ -113,31 +105,32 @@ get a user or add properties to it. The commit model in this case really should
 not care about the Social Auth models.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="sql-oh-how-i-missed-you"&gt;
-&lt;h2&gt;SQL Oh How I Missed You&lt;/h2&gt;
-&lt;p&gt;I love NoSQL, I hate altering tables. It is even better with Appengine as the
-datastore is just there, zero configuration and no syncing tables. It's a lazy
-developers dream come true. My biggest complaints of the Datastore is the
-lack of a (fast and complete) &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/queryclass#Query_count"&gt;count method&lt;/a&gt; and if you want to do a query
-there has to be an &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/indexes"&gt;Index built for it&lt;/a&gt;. Some things are just easier to do
-with SQL.&lt;/p&gt;
+&lt;h2&gt;SQL, Oh How I Missed You&lt;/h2&gt;
+&lt;p&gt;The Appengine &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/overview"&gt;Datastore&lt;/a&gt; is a &lt;a class="reference external" href="http://en.wikipedia.org/wiki/NoSQL"&gt;NoSQL&lt;/a&gt; database which is really easy to work with.
+There is no configuration needed, and you don't have to create tables or alter
+your schema in order to make changes. My biggest complaints of the &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/overview"&gt;Datastore&lt;/a&gt;
+are the lack of a (fast and complete) &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/queryclass#Query_count"&gt;count method&lt;/a&gt; and if you want to do a
+query there has to be an &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/indexes"&gt;Index built for it&lt;/a&gt;. While there is more overhead
+associated with SQL databases, some things are much easier to do, which is
+one reason we decided to make the switch.&lt;/p&gt;
 &lt;div class="section" id="location-and-team-totals"&gt;
 &lt;h3&gt;Location and Team Totals&lt;/h3&gt;
-&lt;p&gt;One major pain point with the code during July was when people changed
+&lt;p&gt;One major pain point with the code last July was when people changed
 their location or team. Since all of the data was &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Denormalization"&gt;denormalized&lt;/a&gt; this meant that
 both location or team totals needed to be updated. Appengine has a nice builtin
 &lt;a class="reference external" href="https://developers.google.com/appengine/articles/deferred"&gt;deferred task&lt;/a&gt; tool to spawn background tasks to do this. But in the SQL
-world this is just a simple JOIN query. Okay it is slightly complex, but still
+world this is just a simple JOIN query. OK, it is slightly complex, but still
 easy to pull off with a &lt;a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/db/sql/"&gt;raw query&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;First here is the Location model:&lt;/p&gt;
+&lt;p&gt;First, here is the Location model:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Location&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;models&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Model&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="n"&gt;slug&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;models&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;SlugField&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;primary_key&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;models&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;CharField&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;max_length&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;blank&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;total&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;models&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;IntegerField&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# this field is never updated!&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The total field is never actually updated it is just there to have a property
+&lt;p&gt;The total field is never actually updated; it is just there to have a property
 to display the total from the raw query. If you have never used a &lt;a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/db/sql/"&gt;raw
 query&lt;/a&gt; this is a great use case for it. Raw queries allow you to run
-any custom SQL and return the Model objects. In this example the total for any
+any custom SQL and return the Model objects. In this example, the total for any
 one location is the sum of all the people in that location. Here is what that
 looks like in SQL:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="n"&gt;july_user&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;location_id&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;slug&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
@@ -152,9 +145,9 @@ looks like in SQL:&lt;/p&gt;
     &lt;span class="k"&gt;LIMIT&lt;/span&gt; &lt;span class="mi"&gt;50&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The magic is all in the &amp;quot;GROUP BY&amp;quot; statement. This SQL
-takes all the players (people who commited during the month) groups them by
+takes all the players (people who commited during the month), groups them by
 their location and sums up all their scores. Also you will notice it's returning
-the fields ('slug', 'name', 'total') which are the same fields on the Location
+the fields ('slug', 'name', 'total'), which are the same fields on the Location
 model. All it needs is the game id and it will return the top 50 locations:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Location&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;objects&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;raw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;LOCATION_SQL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
 &lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;locations&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
@@ -176,7 +169,7 @@ model. All it needs is the game id and it will return the top 50 locations:&lt;/
 &lt;p class="last"&gt;I you plan on using raw queries be sure &lt;em&gt;not&lt;/em&gt; to use string
 formatting on the SQL. This will protect you from &lt;a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/db/sql/#passing-parameters-into-raw"&gt;SQL injection attacks&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;p&gt;This is cleaner and more exact in comparison to the old code. Now
+&lt;p&gt;This is cleaner and more exact compared to the old code. Now
 the locations and teams are up to date without a &lt;a class="reference external" href="https://developers.google.com/appengine/articles/deferred"&gt;deferred task&lt;/a&gt; or other
 background tasks. &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Database_normalization"&gt;Normalization&lt;/a&gt; FTW!&lt;/p&gt;
 &lt;/div&gt;
@@ -184,7 +177,7 @@ background tasks. &lt;a class="reference external" href="http://en.wikipedia.org
 &lt;h3&gt;Migrations&lt;/h3&gt;
 &lt;p&gt;The &lt;a class="reference external" href="https://developers.google.com/appengine/docs/python/datastore/overview"&gt;Datastore&lt;/a&gt; on &lt;a class="reference external" href="https://developers.google.com/appengine/"&gt;Google Appengine&lt;/a&gt; like other &lt;a class="reference external" href="http://en.wikipedia.org/wiki/NoSQL"&gt;NoSQL&lt;/a&gt; databases does not
 require any schema modifications or table creation staments. This is great for
-development as you can freely change your data models or add new ones without
+development, as you can freely change your data models or add new ones without
 any errors or extra work. Tranditional &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Relational_database"&gt;relational databases&lt;/a&gt; require a bit
 more hand holding. If you haven't heard it yet you should use &lt;a class="reference external" href="http://south.readthedocs.org/en/0.7.6/"&gt;South&lt;/a&gt; to manage
 migrations. On top of managing the standard &lt;a class="reference external" href="http://south.readthedocs.org/en/0.7.6/tutorial/part1.html#changing-the-model"&gt;alter table&lt;/a&gt; statements it also
