@@ -397,6 +397,13 @@ Now we apply our custom binding in the html like this:
 Wrap Up
 -------
 
+Using Tastypie_, Backbonejs_, Knockoutjs_ and Knockbackjs_ you can get a 
+complete api and UI experience in a few lines of code. The biggest drawback is
+that the amount of javascript libraries you need to include (hint use gruntjs_). 
+At this point I can re-use this single CommitsView on the project detail page, 
+the user profile page, and the home page. Stay tuned as we dive into realtime 
+with Tornado_ turn these views into live updating streams. 
+
 
 .. _j(an)ulython: http://www.julython.org
 .. _backbonejs: http://backbonejs.org
@@ -406,3 +413,5 @@ Wrap Up
 .. _backbone-tastypie: https://github.com/PaulUithol/backbone-tastypie
 .. _timeago: http://timeago.yarp.com/
 .. _model-view-view model: http://knockoutjs.com/documentation/observables.html#mvvm_and_view_models
+.. _gruntjs: http://gruntjs.com
+.. _tornado: http://www.tornadoweb.org/
