@@ -4,8 +4,8 @@
     <title>Using Tastypie with Backbone and Knockout</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="31 days and nights of Python">
-    <link href=".././theme/css/main.css" rel="stylesheet" type="text/css"/>
-    <link href=".././theme/css/pygments.css" rel="stylesheet" type="text/css"/>
+    <link href="../../.././theme/css/main.css" rel="stylesheet" type="text/css"/>
+    <link href="../../.././theme/css/pygments.css" rel="stylesheet" type="text/css"/>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'/>
     <link href='http://fonts.googleapis.com/css?family=Doppio+One' rel='stylesheet' type='text/css'/>
     <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
@@ -17,7 +17,7 @@
     <div class="navbar navbar-fixed-top" id="topnav">
       <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="../."><img class="logo" alt="julython.org" src=".././theme/images/julython_logo_small.png"/> Blog</a>
+            <a class="brand" href="../../../."><img class="logo" alt="julython.org" src="../../.././theme/images/julython_logo_small.png"/> Blog</a>
             
             <div class="nav">
               <ul class="nav">
@@ -26,9 +26,9 @@
                 
                 
                 
-                    <li class="active"><a href=".././category/code.html">Code</a></li>
+                    <li class="active"><a href="../../.././category/code.html">Code</a></li>
                 
-                    <li ><a href=".././category/julython.html">Julython</a></li>
+                    <li ><a href="../../.././category/julython.html">Julython</a></li>
                 
              </ul>
            </div>
@@ -61,7 +61,7 @@
     </abbr>
     
     <address class="vcard author">
-      By <a class="url fn" href=".././author/robert-myers.html">Robert Myers</a>
+      By <a class="url fn" href="../../.././author/robert-myers.html">Robert Myers</a>
     </address>
     
   </footer><!-- /.post-info -->
@@ -104,7 +104,9 @@ resource is only slightly more complex as I wanted to optimized the database
 query a little bit. The commit resource also needs to create a gravatar image
 for commits with no user.</p>
 <p>Here is what the <tt class="docutils literal">api.py</tt> file looks like:</p>
-<div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="kn">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="nn">django.template.defaultfilters</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ModelResource</span>
 <span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ALL</span>
 <span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ALL_WITH_RELATIONS</span>
 <span class="kn">from</span> <span class="nn">tastypie</span> <span class="kn">import</span> <span class="n">fields</span>
@@ -150,7 +152,8 @@ for commits with no user.</p>
         <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;project_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">name</span>
         <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;project_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s">&#39;project-details&#39;</span><span class="p">,</span>
             <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">slug</span><span class="p">])</span>
-        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="c"># format the timestamp to include timezone as tastypie doesn&#39;t</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">)</span>
         <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;username&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="s">&#39;username&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;picture_url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
                                              <span class="s">&#39;picture_url&#39;</span><span class="p">,</span>
@@ -411,7 +414,7 @@ complete api and UI experience in a few lines of code. The biggest drawback is
 that the amount of javascript libraries you need to include (hint use <a class="reference external" href="http://gruntjs.com">gruntjs</a>).
 At this point I can re-use this single CommitsView on the project detail page,
 the user profile page, and the home page. Stay tuned as we dive into realtime
-with <a class="reference external" href="http://www.tornadoweb.org/">Tornado</a> turn these views into live updating streams.</p>
+with <a class="reference external" href="https://github.com/wandenberg/nginx-push-stream-module">nginx-push-stream-module</a> turn these views into live updating streams.</p>
 </div>
 
   </div><!-- /.entry-content -->

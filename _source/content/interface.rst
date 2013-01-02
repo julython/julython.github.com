@@ -3,7 +3,6 @@ Using Tastypie with Backbone and Knockout
 
 :author: Robert Myers
 :date: 2012-12-27 20:12
-:status: draft
 :category: Code
 :tags: python, javascript, knockback
 :style: participating
@@ -57,6 +56,8 @@ Here is what the ``api.py`` file looks like:
 
 .. code-block:: python
 
+	from django.core.urlresolvers import reverse
+	from django.template.defaultfilters import date
 	from tastypie.resources import ModelResource
 	from tastypie.resources import ALL
 	from tastypie.resources import ALL_WITH_RELATIONS
@@ -103,7 +104,8 @@ Here is what the ``api.py`` file looks like:
 	        bundle.data['project_name'] = bundle.obj.project.name
 	        bundle.data['project_url'] = reverse('project-details', 
 	            args=[bundle.obj.project.slug])
-	        bundle.data['timestamp'] = date(bundle.obj.timestamp)
+	        # format the timestamp to include timezone as tastypie doesn't
+	        bundle.data['timestamp'] = date(bundle.obj.timestamp, 'c')
 	        bundle.data['username'] = getattr(bundle.obj.user, 'username', None)
 	        bundle.data['picture_url'] = getattr(bundle.obj.user, 
 	                                             'picture_url', 
@@ -402,7 +404,7 @@ complete api and UI experience in a few lines of code. The biggest drawback is
 that the amount of javascript libraries you need to include (hint use gruntjs_). 
 At this point I can re-use this single CommitsView on the project detail page, 
 the user profile page, and the home page. Stay tuned as we dive into realtime 
-with Tornado_ turn these views into live updating streams. 
+with nginx-push-stream-module_ turn these views into live updating streams. 
 
 
 .. _j(an)ulython: http://www.julython.org
@@ -414,4 +416,4 @@ with Tornado_ turn these views into live updating streams.
 .. _timeago: http://timeago.yarp.com/
 .. _model-view-view model: http://knockoutjs.com/documentation/observables.html#mvvm_and_view_models
 .. _gruntjs: http://gruntjs.com
-.. _tornado: http://www.tornadoweb.org/
+.. _nginx-push-stream-module: https://github.com/wandenberg/nginx-push-stream-module
