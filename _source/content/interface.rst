@@ -2,7 +2,7 @@ Using Tastypie with Backbone and Knockout
 =========================================
 
 :author: Robert Myers
-:date: 2012-12-27 20:12
+:date: 2013-01-02 10:09
 :category: Code
 :tags: python, javascript, knockback
 :style: participating
