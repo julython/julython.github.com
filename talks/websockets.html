@@ -135,14 +135,44 @@
 </ul>
 
 </article>
-<article class="slide level-2" id="example">
-<h2>Example</h2>
-<p>here</p>
+<article class="slide level-2" id="example-resource">
+<h2>Example Resource</h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CommitResource</span><span class="p">(</span><span class="n">ModelResource</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">UserResource</span><span class="p">,</span> <span class="s">&#39;user&#39;</span><span class="p">,</span>
+                             <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProjectResource</span><span class="p">,</span> <span class="s">&#39;project&#39;</span><span class="p">,</span>
+                                <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">queryset</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="s">&#39;project&#39;</span><span class="p">)</span>
+        <span class="n">allowed_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;get&#39;</span><span class="p">]</span>
+        <span class="n">filtering</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="n">ALL_WITH_RELATIONS</span><span class="p">,</span>
+            <span class="s">&#39;project&#39;</span><span class="p">:</span> <span class="n">ALL_WITH_RELATIONS</span><span class="p">,</span>
+            <span class="s">&#39;timestamp&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;exact&#39;</span><span class="p">,</span> <span class="s">&#39;range&#39;</span><span class="p">,</span> <span class="s">&#39;gt&#39;</span><span class="p">,</span> <span class="s">&#39;lt&#39;</span><span class="p">],</span>
+        <span class="p">}</span>
+</pre></div>
+</div>
 
 </article>
-<article class="slide level-2" id="more">
-<h2>More</h2>
-<p>here</p>
+<article class="slide level-2" id="example-urls">
+<h2>Example URLs</h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tastypie.api</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="kn">from</span> <span class="nn">july</span> <span class="kn">import</span> <span class="n">api</span>
+<span class="n">v1_api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="s">&#39;v1&#39;</span><span class="p">)</span>
+<span class="n">v1_api</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">api</span><span class="o">.</span><span class="n">CommitResource</span><span class="p">())</span>
+
+<span class="n">urlpatterns</span> <span class="o">+=</span> <span class="n">patterns</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">(</span><span class="s">r&#39;^api/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">v1_api</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>GET /api/v1/commit/</li>
+<li>GET /api/v1/commit/(object_id)/</li>
+<li>GET /api/v1/commit/schema/</li>
+</ul>
 
 </article>
 <article class="slide level-1" id="backbone-and-knockout">
@@ -153,7 +183,7 @@
 </ul>
 
 </article>
-<article class="slide level-2" id="id2">
+<article class="slide level-2" id="example">
 <h2>Example</h2>
 <p>Here</p>
 
@@ -238,7 +268,7 @@ sudo nginx -c <span class="nv">$PUSH_PATH</span>/misc/nginx.conf
         <span class="kn">push_stream_ping_message_interval</span> <span class="s">10s</span><span class="p">;</span>
         <span class="kn">push_stream_content_type</span> <span class="s">&quot;application/json</span><span class="p">;</span> <span class="kn">charset=utf-8&quot;</span><span class="p">;</span>
         <span class="c1"># simplified Template</span>
-        <span class="kn">push_stream_message_template</span> <span class="s">&quot;</span><span class="p">{</span><span class="kn">\&quot;text\&quot;:~text~\&quot;}&quot;</span><span class="p">;</span>
+        <span class="kn">push_stream_message_template</span> <span class="s">&quot;</span><span class="p">{</span><span class="kn">\&quot;text\&quot;:~text~\&quot;\}&quot;</span><span class="p">;</span>
 
         <span class="c1"># LOCATIONS HERE</span>
 <span class="p">}</span>

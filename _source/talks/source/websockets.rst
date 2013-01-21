@@ -83,15 +83,44 @@ Tastypie
 
 * Simple RESTful API Generation.
 
-Example
--------
+Example Resource
+-----------------
 
-here
+.. code-block:: python
 
-More
-----
+	class CommitResource(ModelResource):
+	    user = fields.ForeignKey(UserResource, 'user', 
+	                             blank=True, null=True)
+	    project = fields.ForeignKey(ProjectResource, 'project', 
+	                                blank=True, null=True)
+	
+	    class Meta:
+	        queryset = Commit.objects.all()
+	        queryset.select_related('user', 'project')
+	        allowed_methods = ['get']
+	        filtering = {
+	            'user': ALL_WITH_RELATIONS,
+	            'project': ALL_WITH_RELATIONS,
+	            'timestamp': ['exact', 'range', 'gt', 'lt'],
+	        }
 
-here
+Example URLs
+-------------
+
+.. code-block:: python
+
+	from tastypie.api import Api
+	from july import api
+	v1_api = Api(api_name='v1')
+	v1_api.register(api.CommitResource())
+	
+	urlpatterns += patterns('',
+	    url(r'^api/', include(v1_api.urls)),
+	)
+
+* GET /api/v1/commit/
+* GET /api/v1/commit/(object_id)/
+* GET /api/v1/commit/schema/
 
 Backbone and Knockout
 =======================
