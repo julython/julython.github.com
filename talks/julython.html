@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Building Julython &mdash; Julython 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/styles.css" type="text/css" />
+    <link rel="stylesheet" href="_static/single.css" type="text/css" />
+    
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/common.js"></script>
+    <script type="text/javascript" src="_static/slides.js"></script>
+    <script type="text/javascript" src="_static/sync.js"></script>
+    <script type="text/javascript" src="_static/controller.js"></script>
+    <script type="text/javascript" src="_static/init.js"></script>
+    <link rel="top" title="Julython 1.0 documentation" href="index.html" />
+    <link rel="next" title="Building Scalable Web Applications with Appengine" href="scalable_apps.html" />
+    <link rel="prev" title="The Lazy Guide to Websockets" href="websockets.html" /> 
+  </head>
+  <body>
+
+<section
+   id="slide_container"
+   class='slides layout-regular'>
+
+
+  <article class="slide level-1" id="building-julython">
+<span id="julython"></span><h1>Building Julython</h1>
+<p>by Robert Myers</p>
+<p><a class="reference external" href="mailto:robert&#37;&#52;&#48;julython&#46;org">robert<span>&#64;</span>julython<span>&#46;</span>org</a></p>
+
+</article>
+<article class="slide level-2" id="topics">
+<h2>Topics</h2>
+<ul class="simple">
+<li>What is Julython??</li>
+<li>Why Appengine</li>
+<li>GAE Django</li>
+<li>Multiple WSGI Handlers in an Application</li>
+<li>Writing a simple API with webapp2</li>
+<li>Deferred tasks</li>
+<li>Using the Channel API for live feed</li>
+</ul>
+
+</article>
+<article class="slide level-1" id="what-is-julython">
+<h1>What is Julython?</h1>
+
+</article>
+<article class="slide level-2" id="id1">
+<h2>Julython</h2>
+<p>We started Julython to encourage people to write Python.</p>
+<p>We work best with artificial deadlines and superficial point/reward systems.</p>
+<p>So far we have 555 participants with over 12500 commits in 735 projects!</p>
+
+</article>
+<article class="slide level-1" id="why-appengine">
+<h1>Why Appengine?</h1>
+
+</article>
+<article class="slide level-2" id="why-should-i-use-google-appengine">
+<h2>Why should I use Google Appengine?</h2>
+<ul class="simple">
+<li>PAAS vs IAAS</li>
+<li>Auto Scaling</li>
+<li>MegaStore (big table)</li>
+<li>TaskQueue</li>
+<li>Blobstore</li>
+<li>Memcache</li>
+<li>Channel API</li>
+<li>Logging/Errors Dashboard</li>
+</ul>
+
+</article>
+<article class="slide level-1" id="why-didn-t-you-use-heroku">
+<h1>Why didn't you use Heroku?</h1>
+
+</article>
+<article class="slide level-2" id="heroku">
+<h2>Heroku</h2>
+<ul class="simple">
+<li>Heroku Is Awesome</li>
+<li>Tons of free tools</li>
+<li>Works out of the box with Django</li>
+<li>Swiss army knife of tools</li>
+<li>Lets you do what you want</li>
+</ul>
+
+</article>
+<article class="slide level-1" id="django-on-appengine">
+<h1>Django on Appengine</h1>
+
+</article>
+<article class="slide level-2" id="django-is-fun">
+<h2>Django is fun!!</h2>
+<img alt="_images/django.png" src="_images/django.png" />
+
+</article>
+<article class="slide level-1" id="gae-django">
+<h1><tt class="docutils literal"><span class="pre">gae_django</span></tt></h1>
+<p><a class="reference external" href="http://github.com/rmyers/gae_django/">http://github.com/rmyers/gae_django/</a></p>
+
+</article>
+<article class="slide level-2" id="features">
+<h2>Features</h2>
+<ul class="simple">
+<li>AdminSite that works with Appengine</li>
+<li>Auth backends (oauth support)</li>
+<li>Transaction support</li>
+<li><a class="reference external" href="http://github.com/rmyers/gae_django">http://github.com/rmyers/gae_django</a></li>
+</ul>
+
+</article>
+<article class="slide level-1" id="using-multiple-wsgi-processes">
+<h1>Using multiple WSGI processes</h1>
+
+</article>
+<article class="slide level-2" id="benefits">
+<h2>Benefits</h2>
+<ul class="simple">
+<li>Loosely coupled Applications</li>
+<li>Use Django for frontend and Light-weight handler for backend</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="example-app-yaml">
+<h2>Example App.yaml</h2>
+<p>Here is an example:</p>
+<div class="highlight-python"><pre>application: julython
+...
+
+handlers:
+- url: /static
+  static_dir: july/static_root
+
+- url: /_ah/channel/(connected|disconnected)/
+  script: july.channel.app
+
+- url: /api.*
+  script: july.api.app
+
+- url: /.*
+  script: july.main.app</pre>
+</div>
+
+</article>
+<article class="slide level-1" id="writing-a-simple-api-with-webapp2">
+<h1>Writing a simple API with webapp2</h1>
+
+</article>
+<article class="slide level-2" id="simple-api-with-webapp2">
+<h2>Simple API with webapp2</h2>
+<p>Base Handler:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">API</span><span class="p">(</span><span class="n">webapp2</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Be a good netizen citizen and return HTTP verbs allowed.&quot;&quot;&quot;</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">webapp2</span><span class="o">.</span><span class="n">_get_handler_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">set_status</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;Allow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">respond_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">set_status</span><span class="p">(</span><span class="n">status_code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;Content-type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;application/json&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s">&#39;Access-Control-Allow-Origin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;*&#39;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="github-bitbucket-hook">
+<h2>Github/Bitbucket Hook</h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PostCallbackHandler</span><span class="p">(</span><span class="n">API</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">parse_commits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commits</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Takes a list of raw commit data and returns a dict&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parse_payload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;payload&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_commits</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_payload</span><span class="p">():</span>
+            <span class="n">success</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Commit</span><span class="o">.</span><span class="n">make_commit</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">respond_json</span><span class="p">(</span><span class="n">success</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">201</span><span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="github">
+<h2>Github</h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GithubHandler</span><span class="p">(</span><span class="n">PostCallbackHandler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        payload=&gt;&quot;{</span>
+<span class="sd">              &quot;repository&quot;: {</span>
+<span class="sd">                &quot;url&quot;: &quot;http://github.com/defunkt/github&quot;,</span>
+<span class="sd">                ...</span>
+<span class="sd">              },</span>
+<span class="sd">              &quot;commits&quot;: [</span>
+<span class="sd">                {</span>
+<span class="sd">                  &quot;id&quot;: &quot;41a212ee83ca127e3c8cf465891ab7216a705f59&quot;,</span>
+<span class="sd">                  &quot;url&quot;: &quot;http://github.com/defunkt/github/commit/41a212ee83ca127e3c8cf465891ab7216a705f59&quot;,</span>
+<span class="sd">                  &quot;author&quot;: {</span>
+<span class="sd">                    &quot;email&quot;: &quot;chris@ozmm.org&quot;,</span>
+<span class="sd">                    &quot;name&quot;: &quot;Chris Wanstrath&quot;</span>
+<span class="sd">                  },</span>
+<span class="sd">                  &quot;message&quot;: &quot;okay i give in&quot;,</span>
+<span class="sd">                  &quot;timestamp&quot;: &quot;2008-02-15T14:57:17-08:00&quot;,</span>
+<span class="sd">                  &quot;added&quot;: [&quot;filepath.rb&quot;]</span>
+<span class="sd">                },</span>
+<span class="sd">                {</span>
+<span class="sd">                  &quot;id&quot;: &quot;de8251ff97ee194a289832576287d6f8ad74e3d0&quot;,</span>
+<span class="sd">                  &quot;url&quot;: &quot;http://github.com/defunkt/github/commit/de8251ff97ee194a289832576287d6f8ad74e3d0&quot;,</span>
+<span class="sd">                  &quot;author&quot;: {</span>
+<span class="sd">                    &quot;email&quot;: &quot;chris@ozmm.org&quot;,</span>
+<span class="sd">                    &quot;name&quot;: &quot;Chris Wanstrath&quot;</span>
+<span class="sd">                  },</span>
+<span class="sd">                  &quot;message&quot;: &quot;update pricing a tad&quot;,</span>
+<span class="sd">                  &quot;timestamp&quot;: &quot;2008-02-15T14:36:34-08:00&quot;</span>
+<span class="sd">                }</span>
+<span class="sd">              ],...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-1" id="deferred-tasks">
+<h1>Deferred tasks</h1>
+
+</article>
+<article class="slide level-2" id="problem-people-change-their-location">
+<h2>Problem People change their location</h2>
+<ul class="simple">
+<li>Because this is no-sql we don't have a true relation</li>
+<li>Data is denormalized on the Location model</li>
+<li>Need to fix totals after a change</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="solution">
+<h2>Solution</h2>
+<p>Create the denormalizaion code <cite>fix_location</cite>
+then simply import the deferred library and call it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">google.appengine.ext</span> <span class="kn">import</span> <span class="n">deferred</span>
+
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">edit_profile</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">template_name</span><span class="o">=</span><span class="s">&#39;people/edit.html&#39;</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">forms</span> <span class="kn">import</span> <span class="n">EditUserForm</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">get_by_auth_id</span><span class="p">(</span><span class="s">&#39;own:</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">username</span><span class="p">)</span>
+    <span class="n">existing_team</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s">&#39;team_slug&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">))</span>
+
+    <span class="n">form</span> <span class="o">=</span> <span class="n">EditUserForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span> <span class="ow">or</span> <span class="bp">None</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">form</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">put</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">location_slug</span> <span class="o">!=</span> <span class="n">existing_slug</span><span class="p">:</span>
+            <span class="c"># Defer a couple tasks to update the locations</span>
+            <span class="n">deferred</span><span class="o">.</span><span class="n">defer</span><span class="p">(</span><span class="n">fix_location</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">location_slug</span><span class="p">))</span>
+            <span class="n">deferred</span><span class="o">.</span><span class="n">defer</span><span class="p">(</span><span class="n">fix_location</span><span class="p">,</span> <span class="n">existing_slug</span><span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-1" id="using-the-channel-api-for-live-feed">
+<h1>Using the Channel API for live feed</h1>
+
+</article>
+<article class="slide level-2" id="dead-simple">
+<h2>Dead simple</h2>
+<p>In your view simply add a token:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">google.appengine.api</span> <span class="kn">import</span> <span class="n">channel</span>
+
+<span class="c"># Julython live stuffs</span>
+<span class="n">token_key</span> <span class="o">=</span> <span class="s">&#39;live_token:</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span>
+<span class="n">token</span> <span class="o">=</span> <span class="n">memcache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">token_key</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">token</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">create_channel</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+    <span class="n">memcache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">token_key</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">7000</span><span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="template">
+<h2>Template</h2>
+<p>Add the proper js lib and connect the callbacks:</p>
+<div class="highlight-python"><pre>&lt;script type="text/javascript" src="/_ah/channel/jsapi"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+    var self = this;
+    var channel = new goog.appengine.Channel({{ token }});
+    var socket = channel.open();
+    socket.onmessage = function(message) {
+        // parse the message and prepend to the ul element
+        self._newMessage(message);
+    };
+    socket.onerror = function(message){
+        console.log("error");
+    };
+    socket.onclose = function() {
+        self._reconnect();
+    };
+&lt;/script&gt;</pre>
+</div>
+
+</article>
+<article class="slide level-2" id="send-stuff-to-the-channel">
+<h2>Send stuff to the channel</h2>
+<p>Create a simple deferred task after a commit is created to send a message:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">send_live_message</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Deferred task for sending messages to the open channels.&quot;&quot;&quot;</span>
+
+    <span class="n">message_key</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">Key</span><span class="p">(</span><span class="n">urlsafe</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">message_key</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="c"># Open connections stored in Connection Model</span>
+    <span class="n">connections</span> <span class="o">=</span> <span class="n">Connection</span><span class="o">.</span><span class="n">query</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Connection</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">&gt;=</span> <span class="n">oldest</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="n">keys_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+        <span class="n">channel</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">id</span><span class="p">(),</span> <span class="n">message</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
+</pre></div>
+</div>
+
+</article>
+
+
+</section>
+  </body>
+</html>
