@@ -19,13 +19,17 @@ Talks
 Websocket Outline
 -----------------
 
+AWPUG - Jan 24th, 2013
+
 .. toctree::
    :maxdepth: 1
 
    websockets
 
-Julython
+Julython Outline
 -----------------
+
+AWPUG - July 25th, 2012
 
 .. toctree::
    :maxdepth: 1
@@ -33,8 +37,10 @@ Julython
    julython
 
 
-Scalable Applications with Appengine
-------------------------------------
+Scalable Applications with Appengine Outline
+--------------------------------------------
+
+AWPUG - March 22nd, 2012
 
 .. toctree::
    :maxdepth: 1
