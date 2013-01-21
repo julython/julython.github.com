@@ -1,6 +1,9 @@
+.. _websockets:
 
 The Lazy Guide to Websockets
 ============================
+
+Jan 24th, 2013
 
 by Robert Myers
 
