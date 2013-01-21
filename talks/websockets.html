@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Lazy Guide to Websockets &mdash; Julython 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/styles.css" type="text/css" />
+    <link rel="stylesheet" href="_static/single.css" type="text/css" />
+    
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/common.js"></script>
+    <script type="text/javascript" src="_static/slides.js"></script>
+    <script type="text/javascript" src="_static/sync.js"></script>
+    <script type="text/javascript" src="_static/controller.js"></script>
+    <script type="text/javascript" src="_static/init.js"></script>
+    <link rel="top" title="Julython 1.0 documentation" href="index.html" />
+    <link rel="prev" title="Julython Talks" href="index.html" /> 
+  </head>
+  <body>
+
+<section
+   id="slide_container"
+   class='slides layout-regular'>
+
+
+  <article class="slide level-1" id="the-lazy-guide-to-websockets">
+<h1>The Lazy Guide to Websockets</h1>
+<p>by Robert Myers</p>
+<p><a class="reference external" href="mailto:robert&#37;&#52;&#48;julython&#46;org">robert<span>&#64;</span>julython<span>&#46;</span>org</a></p>
+
+</article>
+<article class="slide level-2" id="story">
+<h2>Story</h2>
+<ul class="simple">
+<li>Look at a simple Django App.</li>
+<li>Add fancy UI with endless scroll.</li>
+<li>Keep the page up todate.</li>
+</ul>
+
+</article>
+<article class="slide level-1" id="simple-django-view">
+<h1>Simple Django View</h1>
+
+</article>
+<article class="slide level-2" id="views-py">
+<h2>Views.py</h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">projects</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span>
+        <span class="n">projects</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">commits</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;projects.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s">&#39;projects&#39;</span><span class="p">:</span> <span class="n">projects</span><span class="p">,</span>
+            <span class="s">&#39;profile&#39;</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span>
+            <span class="s">&#39;commits&#39;</span><span class="p">:</span> <span class="n">commits</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">context_instance</span><span class="o">=</span><span class="n">RequestContext</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="problems">
+<h2>Problems</h2>
+<ul class="simple">
+<li>Multiple blocking DB queries in view logic.</li>
+<li>Manual pagination.</li>
+<li>Repeatitive boilerplate.</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="class-based-generic-view">
+<h2>Class Based Generic View?</h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UserProfile</span><span class="p">(</span><span class="n">detail</span><span class="o">.</span><span class="n">DetailView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">User</span>
+    <span class="n">slug_field</span> <span class="o">=</span> <span class="s">&#39;username&#39;</span>
+    <span class="n">slug_url_kwarg</span> <span class="o">=</span> <span class="s">&#39;username&#39;</span>
+    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s">&#39;profile&#39;</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="template">
+<h2>Template</h2>
+<p>Generic Views move the DB queries to the template.</p>
+<div class="highlight-django"><div class="highlight"><pre><span class="x">&lt;h1&gt;</span><span class="cp">{{</span> <span class="nv">object</span> <span class="cp">}}</span><span class="x">&lt;/h1&gt;</span>
+<span class="x">&lt;ul&gt;</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">commit</span> <span class="k">in</span> <span class="nv">object.commit_set.all</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    &lt;li&gt;</span><span class="cp">{{</span> <span class="nv">commit</span> <span class="cp">}}</span><span class="x">&lt;/li&gt;</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;/ul&gt;</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="id1">
+<h2>Problems</h2>
+<ul class="simple">
+<li>Still has multiple blocking DB queries.</li>
+<li>Template logic hides DB queries.</li>
+</ul>
+
+</article>
+<article class="slide level-1" id="solution">
+<h1>Solution</h1>
+<ul class="simple">
+<li>Lazy load related objects with Ajax.</li>
+<li>Build an API.</li>
+<li>Build a dynamic UI.</li>
+</ul>
+
+</article>
+<article class="slide level-1" id="tastypie">
+<h1>Tastypie</h1>
+<ul class="simple">
+<li>Simple RESTful API Generation.</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="example">
+<h2>Example</h2>
+<p>here</p>
+
+</article>
+<article class="slide level-2" id="more">
+<h2>More</h2>
+<p>here</p>
+
+</article>
+<article class="slide level-1" id="backbone-and-knockout">
+<h1>Backbone and Knockout</h1>
+<ul class="simple">
+<li>Backbone handles all interaction with API.</li>
+<li>Knockout provides a simple declarative 2-way binding.</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="id2">
+<h2>Example</h2>
+<p>Here</p>
+
+</article>
+<article class="slide level-1" id="realtime">
+<h1>Realtime</h1>
+<p>Time to get real!</p>
+
+</article>
+<article class="slide level-2" id="choices">
+<h2>Choices</h2>
+<ul class="simple">
+<li>Gevent</li>
+<li>Tornado</li>
+<li>Twisted</li>
+<li>Nginx Push Stream</li>
+</ul>
+
+</article>
+<article class="slide level-1" id="nginx-push-stream-module">
+<h1>Nginx Push Stream Module</h1>
+<p><a class="reference external" href="http://www.nginxpushstream.com/">http://www.nginxpushstream.com/</a></p>
+
+</article>
+<article class="slide level-2" id="benefits">
+<h2>Benefits</h2>
+<ul class="simple">
+<li>You are already running Nginx (I hope)</li>
+<li>Minimal changes to your application</li>
+<li>Simple low security pub/sub model.</li>
+<li>Supports: web sockects, long polling, event source, stream</li>
+<li>Low overhead (confirable memory usage)</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="building">
+<h2>Building</h2>
+<p>You have to build it yourself:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># clone the project</span>
+git clone http://github.com/wandenberg/nginx-push-stream-module.git
+<span class="nv">PUSH_PATH</span><span class="o">=</span><span class="nv">$PWD</span>/nginx-push-stream-module
+
+wget http://nginx.org/download/nginx-1.2.6.tar.gz
+
+<span class="c"># unpack, configure and build</span>
+tar xzvf nginx-1.2.6.tar.gz
+<span class="nb">cd </span>nginx-1.2.6
+./configure --prefix<span class="o">=</span>/etc/nginx --conf-path<span class="o">=</span>/etc/nginx/nginx.conf <span class="se">\</span>
+--add-module<span class="o">=</span>../nginx-push-stream-module
+make
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="building-cont">
+<h2>Building cont.</h2>
+<div class="highlight-bash"><div class="highlight"><pre><span class="c"># install and finish</span>
+sudo make install
+
+<span class="c"># check</span>
+sudo nginx -v
+    nginx version: nginx/1.2.6
+
+<span class="c"># test configuration</span>
+sudo nginx -c <span class="nv">$PUSH_PATH</span>/misc/nginx.conf -t
+    the configuration file <span class="nv">$PUSH_PATH</span>/misc/nginx.conf syntax is ok
+    configuration file <span class="nv">$PUSH_PATH</span>/misc/nginx.conf <span class="nb">test </span>is successful
+
+<span class="c"># run</span>
+sudo nginx -c <span class="nv">$PUSH_PATH</span>/misc/nginx.conf
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="configuration">
+<h2>Configuration</h2>
+<div class="highlight-nginx"><div class="highlight"><pre><span class="c1"># TOP LEVEL MESSAGING CONFIGURATION</span>
+<span class="k">push_stream_ping_message_text</span> <span class="s">&#39;&quot;&quot;&#39;</span><span class="p">;</span>
+
+<span class="c1">## SERVER CONFIGURATION ##</span>
+<span class="k">server</span> <span class="p">{</span>
+        <span class="kn">push_stream_ping_message_interval</span> <span class="s">10s</span><span class="p">;</span>
+        <span class="kn">push_stream_content_type</span> <span class="s">&quot;application/json</span><span class="p">;</span> <span class="kn">charset=utf-8&quot;</span><span class="p">;</span>
+        <span class="c1"># simplified Template</span>
+        <span class="kn">push_stream_message_template</span> <span class="s">&quot;</span><span class="p">{</span><span class="kn">\&quot;text\&quot;:~text~\&quot;}&quot;</span><span class="p">;</span>
+
+        <span class="c1"># LOCATIONS HERE</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="web-sockets">
+<h2>Web Sockets</h2>
+<div class="highlight-nginx"><div class="highlight"><pre><span class="c1"># Subscription for Websockets via nginx-push-stream-module</span>
+<span class="k">location</span> <span class="p">~</span> <span class="sr">/events/ws/(.*)</span> <span class="p">{</span>
+    <span class="kn">push_stream_websocket</span><span class="p">;</span>
+    <span class="kn">push_stream_websocket_allow_publish</span> <span class="no">off</span><span class="p">;</span>
+    <span class="kn">set</span> <span class="nv">$push_stream_channels_path</span> <span class="nv">$1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="eventsource">
+<h2>EventSource</h2>
+<div class="highlight-nginx"><div class="highlight"><pre><span class="c1"># Subscription for EventSource with nginx-push-stream-module</span>
+<span class="k">location</span> <span class="p">~</span> <span class="sr">/events/ev/(.*)</span> <span class="p">{</span>
+    <span class="kn">push_stream_subscriber</span><span class="p">;</span>
+    <span class="kn">push_stream_eventsource_support</span> <span class="no">on</span><span class="p">;</span>
+    <span class="kn">set</span> <span class="nv">$push_stream_channels_path</span> <span class="nv">$1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="long-polling">
+<h2>Long Polling</h2>
+<div class="highlight-nginx"><div class="highlight"><pre><span class="c1"># Subscription for messaging system with nginx-push-stream-module</span>
+<span class="k">location</span> <span class="p">~</span> <span class="sr">/events/lp/(.*)</span> <span class="p">{</span>
+    <span class="kn">push_stream_subscriber</span> <span class="s">long-polling</span><span class="p">;</span>
+    <span class="kn">set</span> <span class="nv">$push_stream_channels_path</span> <span class="nv">$1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="stream">
+<h2>Stream</h2>
+<div class="highlight-nginx"><div class="highlight"><pre><span class="c1"># iFrame streaming for messaging system with nginx-push-stream-module</span>
+<span class="k">location</span> <span class="p">~</span> <span class="sr">/events/sub/(.*)</span> <span class="p">{</span>
+    <span class="kn">push_stream_subscriber</span><span class="p">;</span>
+    <span class="kn">set</span> <span class="nv">$push_stream_channels_path</span> <span class="nv">$1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="stats">
+<h2>Stats</h2>
+<p>See how many connections are open and how many messages there are:</p>
+<div class="highlight-nginx"><div class="highlight"><pre><span class="c1"># Messaging Channel Stats</span>
+<span class="k">location</span> <span class="p">~</span> <span class="sr">/events/stats/(.*)</span> <span class="p">{</span>
+    <span class="kn">push_stream_channels_statistics</span><span class="p">;</span>
+    <span class="kn">set</span> <span class="nv">$push_stream_channel_id</span> <span class="nv">$1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="publishing-messages">
+<h2>Publishing Messages</h2>
+<div class="highlight-nginx"><div class="highlight"><pre><span class="c1"># Publish interface for messaging system</span>
+<span class="k">location</span> <span class="p">~</span> <span class="sr">/events/pub/(.*)</span> <span class="p">{</span>
+    <span class="c1"># only allow on the local server (readonly clients)</span>
+    <span class="kn">allow</span> <span class="mi">127</span><span class="s">.0.0.1</span><span class="p">;</span>
+    <span class="kn">deny</span> <span class="s">all</span><span class="p">;</span>
+    <span class="kn">push_stream_publisher</span> <span class="s">admin</span><span class="p">;</span>
+    <span class="kn">set</span> <span class="nv">$push_stream_channel_id</span> <span class="nv">$1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="example-usage">
+<h2>Example Usage</h2>
+<p>Subscribe:</p>
+<div class="highlight-python"><pre>curl -v 'http://localhost/events/sub/channel'</pre>
+</div>
+<p>Publish:</p>
+<div class="highlight-python"><pre>curl -X POST 'http://localhost/events/pub/channel' -d 'Hello!'</pre>
+</div>
+
+</article>
+
+
+</section>
+  </body>
+</html>

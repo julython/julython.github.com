@@ -5,7 +5,7 @@ Clean only auto generated files.
 import os
 import shutil
 
-IGNORE = ['README.md', 'CNAME']
+IGNORE = ['README.md', 'CNAME', 'talks']
 
 def clean(pwd, test=False):
     for name in os.listdir(pwd):
