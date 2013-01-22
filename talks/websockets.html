@@ -33,6 +33,7 @@
     <script type="text/javascript" src="_static/controller.js"></script>
     <script type="text/javascript" src="_static/init.js"></script>
     <link rel="top" title="Julython 1.0 documentation" href="index.html" />
+    <link rel="next" title="Building Julython" href="julython.html" />
     <link rel="prev" title="Julython Talks" href="index.html" /> 
   </head>
   <body>
@@ -66,8 +67,8 @@
 <h2>Views.py</h2>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">projects</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span>
-        <span class="n">projects</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="n">commits</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
+    <span class="n">projects</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">commits</span> <span class="o">=</span> <span class="n">Commit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;projects.html&#39;</span><span class="p">,</span> <span class="p">{</span>
             <span class="s">&#39;projects&#39;</span><span class="p">:</span> <span class="n">projects</span><span class="p">,</span>
@@ -85,38 +86,6 @@
 <li>Multiple blocking DB queries in view logic.</li>
 <li>Manual pagination.</li>
 <li>Repeatitive boilerplate.</li>
-</ul>
-
-</article>
-<article class="slide level-2" id="class-based-generic-view">
-<h2>Class Based Generic View?</h2>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">UserProfile</span><span class="p">(</span><span class="n">detail</span><span class="o">.</span><span class="n">DetailView</span><span class="p">):</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">User</span>
-    <span class="n">slug_field</span> <span class="o">=</span> <span class="s">&#39;username&#39;</span>
-    <span class="n">slug_url_kwarg</span> <span class="o">=</span> <span class="s">&#39;username&#39;</span>
-    <span class="n">context_object_name</span> <span class="o">=</span> <span class="s">&#39;profile&#39;</span>
-</pre></div>
-</div>
-
-</article>
-<article class="slide level-2" id="template">
-<h2>Template</h2>
-<p>Generic Views move the DB queries to the template.</p>
-<div class="highlight-django"><div class="highlight"><pre><span class="x">&lt;h1&gt;</span><span class="cp">{{</span> <span class="nv">object</span> <span class="cp">}}</span><span class="x">&lt;/h1&gt;</span>
-<span class="x">&lt;ul&gt;</span>
-<span class="x">  </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">commit</span> <span class="k">in</span> <span class="nv">object.commit_set.all</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">    &lt;li&gt;</span><span class="cp">{{</span> <span class="nv">commit</span> <span class="cp">}}</span><span class="x">&lt;/li&gt;</span>
-<span class="x">  </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">&lt;/ul&gt;</span>
-</pre></div>
-</div>
-
-</article>
-<article class="slide level-2" id="id1">
-<h2>Problems</h2>
-<ul class="simple">
-<li>Still has multiple blocking DB queries.</li>
-<li>Template logic hides DB queries.</li>
 </ul>
 
 </article>
@@ -176,6 +145,29 @@
 </ul>
 
 </article>
+<article class="slide level-2" id="example-output">
+<h2>Example Output</h2>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="nx">meta</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">limit</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nx">next</span><span class="o">:</span> <span class="s2">&quot;/api/v1/commit/?format=json&amp;limit=1&amp;offset=3&quot;</span><span class="p">,</span>
+        <span class="nx">offset</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="nx">previous</span><span class="o">:</span> <span class="s2">&quot;/api/v1/commit/?format=json&amp;limit=1&amp;offset=1&quot;</span><span class="p">,</span>
+        <span class="nx">total_count</span><span class="o">:</span> <span class="mi">11</span>
+    <span class="p">},</span>
+    <span class="nx">objects</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nx">created_on</span><span class="o">:</span> <span class="s2">&quot;2013-01-18T06:26:39.349473&quot;</span><span class="p">,</span>
+            <span class="nx">hash</span><span class="o">:</span> <span class="s2">&quot;61ef4c52d9731b8f03240961834f3b1d4fa6cd53&quot;</span><span class="p">,</span>
+            <span class="nx">message</span><span class="o">:</span> <span class="s2">&quot;Adding a fabric command to load test commits&quot;</span><span class="p">,</span>
+            <span class="nx">other</span><span class="o">:</span> <span class="s2">&quot;Fields here&quot;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+
+</article>
 <article class="slide level-1" id="backbone-and-knockout">
 <h1>Backbone and Knockout</h1>
 <ul class="simple">
@@ -184,9 +176,84 @@
 </ul>
 
 </article>
-<article class="slide level-2" id="example">
-<h2>Example</h2>
-<p>Here</p>
+<article class="slide level-2" id="backbone-collection">
+<h2>Backbone Collection</h2>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitCollection</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">model</span><span class="o">:</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">Commit</span><span class="p">,</span>
+  <span class="nx">url</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span><span class="k">return</span> <span class="s1">&#39;/api/v1/commit/?&#39;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">params</span><span class="p">();},</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">limit</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">limit</span> <span class="o">||</span> <span class="mi">20</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">offset</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">offset</span> <span class="o">||</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="nx">params</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">param</span><span class="p">({</span><span class="nx">limit</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">limit</span><span class="p">,</span> <span class="nx">offset</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">offset</span><span class="p">});</span>
+  <span class="p">},</span>
+  <span class="nx">parse</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">total</span> <span class="o">=</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">total_count</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">offset</span> <span class="o">=</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">offset</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">limit</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">objects</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="knockback">
+<h2>Knockback</h2>
+<p>Glue between Backbone and Knockout.</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitsView</span> <span class="o">=</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">ViewModel</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitCollection</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">c</span><span class="p">.</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">add</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">commits</span> <span class="o">=</span> <span class="nx">kb</span><span class="p">.</span><span class="nx">collectionObservable</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">c</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="nx">hasMore</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">commits</span><span class="p">.</span><span class="nx">collection</span><span class="p">().</span><span class="nx">hasMore</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="nx">fetch</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hasMore</span><span class="p">())</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">commits</span><span class="p">.</span><span class="nx">collection</span><span class="p">().</span><span class="nx">fetch</span><span class="p">({</span><span class="nx">add</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="knockout-in-template">
+<h2>Knockout In Template</h2>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">data-bind=</span><span class="s">&quot;foreach: commits&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;media&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;a</span> <span class="na">class=</span><span class="s">&quot;thumbnail pull-left&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;attr:{href: link}&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;img</span> <span class="na">data-bind=</span><span class="s">&quot;attr: {src: picture_url, alt: username}&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;media-body&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h4</span> <span class="na">class=</span><span class="s">&quot;media-heading&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;timeago: timestamp&quot;</span><span class="nt">&gt;&lt;/h4&gt;</span>
+    <span class="nt">&lt;strong</span> <span class="na">data-bind=</span><span class="s">&quot;text: message&quot;</span><span class="nt">&gt;&lt;/strong&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;hash&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;visible: username&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;a</span> <span class="na">data-bind=</span><span class="s">&quot;text: username, attr: {href: link }&quot;</span><span class="nt">&gt;&lt;/a&gt;</span> <span class="ni">&amp;mdash;</span>
+      <span class="nt">&lt;a</span> <span class="na">data-bind=</span><span class="s">&quot;visible: url, attr:{href:url }&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;text: hash().substring(0, 8)&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+      <span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">&quot;hash&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;visible: !username()&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;visible: !url(), text: hash().substring(0, 8)&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+    <span class="nt">&lt;/p&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="knockout-continued">
+<h2>Knockout Continued</h2>
+<p>Connect the page up to the collection:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+  <span class="nx">ko</span><span class="p">.</span><span class="nx">applyBindings</span><span class="p">(</span><span class="k">new</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitsView</span><span class="p">());</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+</div>
 
 </article>
 <article class="slide level-1" id="realtime">
@@ -217,6 +284,7 @@
 <li>Simple low security pub/sub model.</li>
 <li>Supports: web sockects, long polling, event source, stream</li>
 <li>Low overhead (confirable memory usage)</li>
+<li>Publish messages with simple POST</li>
 </ul>
 
 </article>
@@ -246,12 +314,12 @@ sudo make install
 
 <span class="c"># check</span>
 sudo nginx -v
-    nginx version: nginx/1.2.6
+&gt; nginx version: nginx/1.2.6
 
 <span class="c"># test configuration</span>
 sudo nginx -c <span class="nv">$PUSH_PATH</span>/misc/nginx.conf -t
-    the configuration file <span class="nv">$PUSH_PATH</span>/misc/nginx.conf syntax is ok
-    configuration file <span class="nv">$PUSH_PATH</span>/misc/nginx.conf <span class="nb">test </span>is successful
+&gt; the configuration file <span class="nv">$PUSH_PATH</span>/misc/nginx.conf syntax is ok
+&gt; configuration file <span class="nv">$PUSH_PATH</span>/misc/nginx.conf <span class="nb">test </span>is successful
 
 <span class="c"># run</span>
 sudo nginx -c <span class="nv">$PUSH_PATH</span>/misc/nginx.conf
@@ -266,12 +334,12 @@ sudo nginx -c <span class="nv">$PUSH_PATH</span>/misc/nginx.conf
 
 <span class="c1">## SERVER CONFIGURATION ##</span>
 <span class="k">server</span> <span class="p">{</span>
-        <span class="kn">push_stream_ping_message_interval</span> <span class="s">10s</span><span class="p">;</span>
-        <span class="kn">push_stream_content_type</span> <span class="s">&quot;application/json</span><span class="p">;</span> <span class="kn">charset=utf-8&quot;</span><span class="p">;</span>
-        <span class="c1"># simplified Template</span>
-        <span class="kn">push_stream_message_template</span> <span class="s">&quot;</span><span class="p">{</span><span class="kn">\&quot;text\&quot;:~text~\&quot;\}&quot;</span><span class="p">;</span>
+    <span class="kn">push_stream_ping_message_interval</span> <span class="s">10s</span><span class="p">;</span>
+    <span class="kn">push_stream_content_type</span> <span class="s">&quot;application/json</span><span class="p">;</span> <span class="kn">charset=utf-8&quot;</span><span class="p">;</span>
+    <span class="c1"># simplified Template</span>
+    <span class="kn">push_stream_message_template</span> <span class="s">&quot;</span><span class="p">{</span><span class="kn">\&quot;text\&quot;:~text~\&quot;\}&quot;</span><span class="p">;</span>
 
-        <span class="c1"># LOCATIONS HERE</span>
+    <span class="c1"># LOCATIONS HERE</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -357,6 +425,32 @@ sudo nginx -c <span class="nv">$PUSH_PATH</span>/misc/nginx.conf
 <p>Publish:</p>
 <div class="highlight-python"><pre>curl -X POST 'http://localhost/events/pub/channel' -d 'Hello!'</pre>
 </div>
+
+</article>
+<article class="slide level-1" id="creating-messages-from-django">
+<h1>Creating Messages from Django</h1>
+<p>POST a message to the channel(s) you want.</p>
+<p><em>hint: just use Requests</em></p>
+
+</article>
+<article class="slide level-2" id="re-use-tastypie-resources">
+<h2>Re-use Tastypie Resources</h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">url</span> <span class="o">=</span> <span class="s">&#39;http://localhost/events/pub/&#39;</span>
+<span class="n">resource</span> <span class="o">=</span> <span class="n">CommitResource</span><span class="p">()</span>
+<span class="c"># Build a bundle from the new object</span>
+<span class="n">bundle</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">build_bundle</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">commit</span><span class="p">)</span>
+<span class="c"># Run full_dehydrate to run all custom dehydrate methods</span>
+<span class="n">dehydrated</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">full_dehydrate</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
+<span class="n">serialized</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span>
+    <span class="bp">None</span><span class="p">,</span> <span class="n">dehydrated</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">)</span>
+<span class="c"># Make messages</span>
+<span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">+</span> <span class="s">&#39;user-</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">commit</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">serialized</span><span class="p">)</span>
+<span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">+</span> <span class="s">&#39;project-</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">commit</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">serialized</span><span class="p">)</span>
+<span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span> <span class="o">+</span> <span class="s">&#39;global&#39;</span><span class="p">,</span> <span class="n">serialized</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Tastypie allready serializes your content to JSON, so just use that. The
+above code is run after a new commit object is created.</p>
 
 </article>
 
