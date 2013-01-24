@@ -227,15 +227,16 @@ http://www.nginxpushstream.com/
 Benefits
 --------
 
-* You are already running Nginx (I hope)
-* Minimal changes to your application
+* You are already running Nginx. (I hope)
+* Minimal changes to your application.
 * Simple low security pub/sub model.
-* Supports: web sockects, long polling, event source, stream
-* Low overhead (confirable memory usage)
-* Publish messages with simple POST
+* Easily supports multiple backend services.
+* Supports: web sockects, long polling, event source, stream.
+* Low overhead.
+* Publish messages with simple POST.
 
-Building
---------
+Hard Parts
+-----------
 
 You have to build it yourself:
 
@@ -388,18 +389,74 @@ Re-use Tastypie Resources
 
 .. code-block:: python
 
-	url = 'http://localhost/events/pub/'
-	resource = CommitResource()
-	# Build a bundle from the new object
-	bundle = resource.build_bundle(obj=commit)
-	# Run full_dehydrate to run all custom dehydrate methods 
-	dehydrated = resource.full_dehydrate(bundle)
-	serialized = resource.serialize(
-	    None, dehydrated, format='application/json')
-	# Make messages
-	requests.post(url + 'user-%s' % commit.user.id, serialized)
-	requests.post(url + 'project-%s' % commit.project.id, serialized)
-	requests.post(url + 'global', serialized)
+    url = 'http://localhost/events/pub/'
+    resource = CommitResource()
+    # Build a bundle from the new object
+    bundle = resource.build_bundle(obj=commit)
+    # Run full_dehydrate to run all custom dehydrate methods 
+    dehydrated = resource.full_dehydrate(bundle)
+    serialized = resource.serialize(
+        None, dehydrated, format='application/json')
+    # Make messages
+    requests.post(url + 'user-%s' % commit.user.id, serialized)
+    requests.post(url + 'project-%s' % commit.project.id, serialized)
+    requests.post(url + 'global', serialized)
 
 Tastypie allready serializes your content to JSON, so just use that. The
 above code is run after a new commit object is created.
+
+Change Client Code
+------------------
+
+.. code-block:: javascript
+
+    JULY.CommitCollection = Backbone.Collection.extend({
+      initialize: function(data, options) {
+        // A reference to this collection
+        JULY.collection = this;
+
+        this._pushStream = new PushStream({
+          host: "www.julython.org",
+          modes: "websocket",
+          urlPrefixWebsocket: "/events/ws"
+        });
+        
+        
+        // Continued...
+      }
+    });
+
+Continued
+---------
+
+.. code-block:: javascript
+
+    // on message callback
+    this._pushStream.onmessage = function(text) {
+      JULY.collection.unshift(text);
+    };
+    
+    // handle errors/open/close
+    this._pushStream.onstatuschange = function(state) {
+      console.log("-- PushStream state changed: " + state);
+    };
+    
+    // Subscribe to the channel 'project-(id)', 'user-(id)'
+    this._pushStream.addChannel('global');
+    this._pushStream.connect();
+
+Add Push Stream Javascript Helper
+---------------------------------
+
+.. code-block:: html
+
+    <script type="text/javascript" src="pushstream.js"></script>
+    <script type="text/javascript" src="commits.js"></script>
+    <script type="text/javascript">
+      ko.applyBindings(new JULY.CommitsView());
+    </script>
+
+'Live' Live Demo
+================
+
+http://www.julython.org/live/

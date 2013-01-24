@@ -279,17 +279,18 @@
 <article class="slide level-2" id="benefits">
 <h2>Benefits</h2>
 <ul class="simple">
-<li>You are already running Nginx (I hope)</li>
-<li>Minimal changes to your application</li>
+<li>You are already running Nginx. (I hope)</li>
+<li>Minimal changes to your application.</li>
 <li>Simple low security pub/sub model.</li>
-<li>Supports: web sockects, long polling, event source, stream</li>
-<li>Low overhead (confirable memory usage)</li>
-<li>Publish messages with simple POST</li>
+<li>Easily supports multiple backend services.</li>
+<li>Supports: web sockects, long polling, event source, stream.</li>
+<li>Low overhead.</li>
+<li>Publish messages with simple POST.</li>
 </ul>
 
 </article>
-<article class="slide level-2" id="building">
-<h2>Building</h2>
+<article class="slide level-2" id="hard-parts">
+<h2>Hard Parts</h2>
 <p>You have to build it yourself:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="c"># clone the project</span>
 git clone http://github.com/wandenberg/nginx-push-stream-module.git
@@ -451,6 +452,62 @@ sudo nginx -c <span class="nv">$PUSH_PATH</span>/misc/nginx.conf
 </div>
 <p>Tastypie allready serializes your content to JSON, so just use that. The
 above code is run after a new commit object is created.</p>
+
+</article>
+<article class="slide level-2" id="change-client-code">
+<h2>Change Client Code</h2>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitCollection</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// A reference to this collection</span>
+    <span class="nx">JULY</span><span class="p">.</span><span class="nx">collection</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">_pushStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PushStream</span><span class="p">({</span>
+      <span class="nx">host</span><span class="o">:</span> <span class="s2">&quot;www.julython.org&quot;</span><span class="p">,</span>
+      <span class="nx">modes</span><span class="o">:</span> <span class="s2">&quot;websocket&quot;</span><span class="p">,</span>
+      <span class="nx">urlPrefixWebsocket</span><span class="o">:</span> <span class="s2">&quot;/events/ws&quot;</span>
+    <span class="p">});</span>
+
+
+    <span class="c1">// Continued...</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="continued">
+<h2>Continued</h2>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="c1">// on message callback</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">_pushStream</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">JULY</span><span class="p">.</span><span class="nx">collection</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c1">// handle errors/open/close</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">_pushStream</span><span class="p">.</span><span class="nx">onstatuschange</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;-- PushStream state changed: &quot;</span> <span class="o">+</span> <span class="nx">state</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c1">// Subscribe to the channel &#39;project-(id)&#39;, &#39;user-(id)&#39;</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">_pushStream</span><span class="p">.</span><span class="nx">addChannel</span><span class="p">(</span><span class="s1">&#39;global&#39;</span><span class="p">);</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">_pushStream</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="add-push-stream-javascript-helper">
+<h2>Add Push Stream Javascript Helper</h2>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;pushstream.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;commits.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+  <span class="nx">ko</span><span class="p">.</span><span class="nx">applyBindings</span><span class="p">(</span><span class="k">new</span> <span class="nx">JULY</span><span class="p">.</span><span class="nx">CommitsView</span><span class="p">());</span>
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-1" id="live-live-demo">
+<h1>'Live' Live Demo</h1>
+<p><a class="reference external" href="http://www.julython.org/live/">http://www.julython.org/live/</a></p>
 
 </article>
 
