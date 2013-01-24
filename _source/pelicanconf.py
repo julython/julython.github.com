@@ -26,3 +26,5 @@ ARTICLE_SAVE_AS = '{date:%Y}/{date:%b}/{slug}/index.html'
 
 TWITTER_USERNAME = 'julython'
 DISQUS_SITENAME = 'julythonblog'
+
+MENUITEMS = (('Talks', '/talks/'),)
